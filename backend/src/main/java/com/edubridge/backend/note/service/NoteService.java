@@ -1,6 +1,14 @@
 
 package com.edubridge.backend.note.service;
 
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+
 import com.edubridge.backend.course.entity.Course;
 import com.edubridge.backend.enrollment.repository.EnrollmentRepository;
 import com.edubridge.backend.note.dto.NoteResponse;
@@ -11,14 +19,6 @@ import com.edubridge.backend.subject.repository.SubjectRepository;
 import com.edubridge.backend.user.entity.Role;
 import com.edubridge.backend.user.entity.User;
 import com.edubridge.backend.user.repository.UserRepository;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.util.List;
-import java.util.UUID;
 
 @Service
 public class NoteService {
@@ -37,6 +37,18 @@ public class NoteService {
         this.subjectRepository = subjectRepository;
         this.userRepository = userRepository;
         this.enrollmentRepository = enrollmentRepository;
+    }
+
+    @Transactional(readOnly = true)
+    public List<NoteResponse> getAllAccessibleNotes(String email) {
+
+        User user = getUser(email);
+
+        return noteRepository.findAllByOrderByCreatedAtDesc()
+                .stream()
+                .filter(note -> hasAccess(user, note.getSubject().getCourse()))
+                .map(NoteResponse::from)
+                .toList();
     }
 
     @Transactional(readOnly = true)
@@ -79,10 +91,10 @@ public class NoteService {
                         HttpStatus.NOT_FOUND, "User not found"));
     }
 
-    private void validateAccess(User user, Course course) {
+    private boolean hasAccess(User user, Course course) {
 
         if (user.getRole() == Role.ADMIN) {
-            return;
+            return true;
         }
 
         boolean isTeacher =
@@ -90,12 +102,12 @@ public class NoteService {
                 && course.getTeacher().getId().equals(user.getId());
 
         if (isTeacher) {
-            return;
+            return true;
         }
 
         boolean isStudent = user.getRole() == Role.STUDENT;
 
-        boolean isEnrolled = isStudent
+        return isStudent
                 && course.isPublished()
                 && enrollmentRepository
                     .existsByStudent_IdAndCourse_IdAndStatus(
@@ -103,8 +115,11 @@ public class NoteService {
                         course.getId(),
                         "ACTIVE"
                     );
+    }
 
-        if (!isEnrolled) {
+    private void validateAccess(User user, Course course) {
+
+        if (!hasAccess(user, course)) {
             throw new ResponseStatusException(
                     HttpStatus.FORBIDDEN,
                     "You do not have permission to access these notes"

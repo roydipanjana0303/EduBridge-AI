@@ -1,11 +1,27 @@
-export type UserRole = 'Student' | 'Mentor';
+
+export type UserRole = 'Student' | 'Mentor' | 'Admin';
 
 export interface UserProfile {
+  id?: string;
   name: string;
+  email?: string;
   role: UserRole;
   credits: number;
   streak: number;
   avatarColor: string;
+}
+
+export interface BackendUser {
+  id: string;
+  name: string;
+  email: string;
+  role: 'STUDENT' | 'TEACHER' | 'ADMIN';
+}
+
+export interface AuthResponse {
+  accessToken: string;
+  tokenType: string;
+  user: BackendUser;
 }
 
 export interface NoteItem {

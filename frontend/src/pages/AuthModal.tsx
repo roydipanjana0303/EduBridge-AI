@@ -1,6 +1,8 @@
+
 import React, { useState } from 'react';
 import { UserRole, UserProfile } from '../types';
 import { Logo } from '../components/Icons';
+import { ApiService } from '../services/api';
 
 interface AuthModalProps {
   initialRole?: UserRole;
@@ -13,25 +15,41 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   onLogin,
   onBackToHome,
 }) => {
-  const [role, setRole] = useState<UserRole>(initialRole);
-  const [name, setName] = useState(initialRole === 'Student' ? 'Aarav' : 'Meera Ma’am');
-  const [password, setPassword] = useState('demo1234');
+  const [role] = useState<UserRole>(initialRole);
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleRoleChange = (newRole: UserRole) => {
-    setRole(newRole);
-    setName(newRole === 'Student' ? 'Aarav' : 'Meera Ma’am');
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const finalName = name.trim() || (role === 'Student' ? 'Aarav' : 'Meera Ma’am');
-    onLogin({
-      name: finalName,
-      role,
-      credits: role === 'Student' ? 240 : 500,
-      streak: role === 'Student' ? 6 : 42,
-      avatarColor: role === 'Student' ? '#B9E4E8' : '#9ED5DC',
-    });
+    setError('');
+    setLoading(true);
+
+    try {
+      const result = isRegistering
+        ? await ApiService.register({
+            name: name.trim(),
+            email: email.trim(),
+            password,
+          })
+        : await ApiService.login({
+            email: email.trim(),
+            password,
+          });
+
+      onLogin(result.user);
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'Unable to authenticate. Please try again.',
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -39,118 +57,137 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       <div className="w-full max-w-md">
         <div className="flex items-center justify-between mb-6">
           <Logo size={32} />
+
           <button
+            type="button"
             onClick={onBackToHome}
             className="eb-btn ghost sm"
           >
-            ← Back to home
+            Back to Home
           </button>
         </div>
 
-        <div className="eb-card border-2 border-[var(--ink)] bg-[var(--card)] p-6 sm:p-8 relative">
-          <div className="absolute -top-3.5 right-4 bg-[var(--chilli)] text-white font-extrabold text-xs px-3 py-0.5 rounded-full border border-[var(--ink)] rotate-3">
-            Demo Portal
-          </div>
+        <h2 className="text-2xl font-black mb-1 logo-font">
+          {isRegistering
+            ? 'Create Student Account'
+            : role === 'Student'
+              ? 'Student Portal'
+              : role === 'Admin'
+                ? 'Admin Portal'
+                : 'Mentor Dashboard'}
+        </h2>
 
-          {/* Role switcher tabs */}
-          <div className="grid grid-cols-2 gap-2 mb-6 p-1 bg-[var(--soft)] rounded-xl border border-[var(--ink)]/20">
-            <button
-              type="button"
-              onClick={() => handleRoleChange('Student')}
-              className={`py-2 text-sm font-black rounded-lg transition-all ${
-                role === 'Student'
-                  ? 'bg-[var(--mango)] text-[#071B2B] shadow-sm border border-[var(--ink)]'
-                  : 'text-[var(--ink)] opacity-70 hover:opacity-100'
-              }`}
-            >
-              🎓 Student
-            </button>
-            <button
-              type="button"
-              onClick={() => handleRoleChange('Mentor')}
-              className={`py-2 text-sm font-black rounded-lg transition-all ${
-                role === 'Mentor'
-                  ? 'bg-[var(--mango)] text-[#071B2B] shadow-sm border border-[var(--ink)]'
-                  : 'text-[var(--ink)] opacity-70 hover:opacity-100'
-              }`}
-            >
-              👩‍🏫 Mentor / Teacher
-            </button>
-          </div>
+        <p className="text-xs opacity-75 mb-5">
+          {isRegistering
+            ? 'Create your EduBridge AI student account.'
+            : 'Sign in with your registered EduBridge AI credentials.'}
+        </p>
 
-          <h2 className="text-2xl font-black mb-1 logo-font">
-            {role === 'Student' ? 'Student Portal' : 'Mentor Dashboard'}
-          </h2>
-          <p className="text-xs opacity-75 mb-5">
-            {role === 'Student'
-              ? 'Access your saved notes, mentors, AI assistant and tests.'
-              : 'Answer doubts, upload learning materials and monitor students.'}
-          </p>
-
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {isRegistering && (
             <div>
               <label className="block text-xs font-bold mb-1 opacity-90">
                 Your Full Name
               </label>
+
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Enter your name"
+                placeholder="Enter your full name"
                 className="eb-input text-sm"
+                maxLength={120}
                 required
               />
             </div>
+          )}
 
-            <div>
-              <label className="block text-xs font-bold mb-1 opacity-90">
-                Password
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter password"
-                className="eb-input text-sm"
-                required
-              />
-            </div>
+          <div>
+            <label className="block text-xs font-bold mb-1 opacity-90">
+              Email Address
+            </label>
 
-            <button
-              type="submit"
-              className="eb-btn red w-full py-3 text-sm font-black mt-2"
-            >
-              Log in as {role} →
-            </button>
-          </form>
-
-          {/* Quick presets */}
-          <div className="mt-6 pt-4 border-t border-[var(--ink)]/15">
-            <div className="text-xs font-semibold opacity-70 mb-2">Quick demo presets:</div>
-            <div className="flex flex-wrap gap-1.5">
-              <button
-                type="button"
-                onClick={() => {
-                  setRole('Student');
-                  setName('Aarav');
-                }}
-                className="eb-chip text-xs"
-              >
-                Aarav (Grade 12 Student)
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setRole('Mentor');
-                  setName('Meera Ma’am');
-                }}
-                className="eb-chip text-xs"
-              >
-                Meera Ma’am (Physics Mentor)
-              </button>
-            </div>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
+              className="eb-input text-sm"
+              autoComplete="email"
+              required
+            />
           </div>
+
+          <div>
+            <label className="block text-xs font-bold mb-1 opacity-90">
+              Password
+            </label>
+
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
+              className="eb-input text-sm"
+              autoComplete={isRegistering ? 'new-password' : 'current-password'}
+              minLength={isRegistering ? 8 : undefined}
+              required
+            />
+
+            {isRegistering && (
+              <p className="text-xs opacity-60 mt-1">
+                Password must contain at least 8 characters.
+              </p>
+            )}
+          </div>
+
+          {error && (
+            <div
+              role="alert"
+              className="rounded-lg border border-red-500/40 bg-red-500/10 p-3 text-sm text-red-600"
+            >
+              {error}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="eb-btn red w-full py-3 text-sm font-black mt-2 disabled:opacity-60"
+          >
+            {loading
+              ? 'Please wait...'
+              : isRegistering
+                ? 'Create Account'
+                : 'Log In'}
+          </button>
+        </form>
+
+        <div className="mt-6 text-center text-sm">
+          {isRegistering
+            ? 'Already have an account?'
+            : "Don't have an account?"}
+
+          <button
+            type="button"
+            disabled={loading}
+            onClick={() => {
+              setIsRegistering((current) => !current);
+              setError('');
+              setPassword('');
+            }}
+            className="ml-2 font-bold underline"
+          >
+            {isRegistering ? 'Log in' : 'Register'}
+          </button>
         </div>
+
+        {isRegistering && (
+          <p className="text-xs text-center opacity-60 mt-3">
+            Public registration creates student accounts. Teacher and admin
+            accounts are provided by the institution.
+          </p>
+        )}
       </div>
     </div>
   );

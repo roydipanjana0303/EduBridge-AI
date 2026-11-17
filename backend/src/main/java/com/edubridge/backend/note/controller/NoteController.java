@@ -38,4 +38,11 @@ public class NoteController {
 
         return noteService.getNoteById(noteId, email);
     }
+
+    @GetMapping("/notes")
+public List<NoteResponse> getAllNotes(
+        @AuthenticationPrincipal String email) {
+
+    return noteService.getAllAccessibleNotes(email);
+}
 }

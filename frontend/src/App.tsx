@@ -1,61 +1,76 @@
-import React, { useState, useEffect } from 'react';
-import { UserProfile, ActiveView, NoteItem, MentorProfile, UserRole } from './types';
+
+import React, { useState, useEffect } from "react";
 import {
-  INITIAL_NOTES,
+  UserProfile,
+  ActiveView,
+  NoteItem,
+  MentorProfile,
+  UserRole,
+} from "./types";
+import {
   INITIAL_MENTORS,
   INITIAL_VOICE_ROOMS,
   INITIAL_STUDY_GROUPS,
   INITIAL_QA,
-} from './data/mockData';
-import { ParticleCanvas } from './components/ParticleCanvas';
-import { Header } from './components/Header';
-import { Sidebar } from './components/Sidebar';
-import { Toast } from './components/Toast';
-import { LandingPage } from './pages/LandingPage';
-import { AuthModal } from './pages/AuthModal';
-import { HomeView } from './pages/HomeView';
-import { TeacherDashboardView } from './pages/TeacherDashboardView';
-import { NotesView } from './pages/NotesView';
-import { ChatView } from './pages/ChatView';
-import { VoiceView } from './pages/VoiceView';
-import { GroupsView } from './pages/GroupsView';
-import { QAView } from './pages/QAView';
-import { AIView } from './pages/AIView';
-import { GapRecoveryView } from './pages/GapRecoveryView';
-import { CareerRoadmapView } from './pages/CareerRoadmapView';
-import { QuizView } from './pages/QuizView';
-import { OfflineView } from './pages/OfflineView';
-import { RewardsView } from './pages/RewardsView';
+} from "./data/mockData";
+import { ParticleCanvas } from "./components/ParticleCanvas";
+import { Header } from "./components/Header";
+import { Sidebar } from "./components/Sidebar";
+import { Toast } from "./components/Toast";
+import { LandingPage } from "./pages/LandingPage";
+import { AuthModal } from "./pages/AuthModal";
+import { HomeView } from "./pages/HomeView";
+import { TeacherDashboardView } from "./pages/TeacherDashboardView";
+import { NotesView } from "./pages/NotesView";
+import { ChatView } from "./pages/ChatView";
+import { VoiceView } from "./pages/VoiceView";
+import { GroupsView } from "./pages/GroupsView";
+import { QAView } from "./pages/QAView";
+import { AIView } from "./pages/AIView";
+import { GapRecoveryView } from "./pages/GapRecoveryView";
+import { CareerRoadmapView } from "./pages/CareerRoadmapView";
+import { QuizView } from "./pages/QuizView";
+import { OfflineView } from "./pages/OfflineView";
+import { RewardsView } from "./pages/RewardsView";
+
+import { StorageService } from "./services/storage";
+import { ApiService } from "./services/api";
 
 export const App: React.FC = () => {
   // Authentication & Navigation
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() =>
+    Boolean(StorageService.getToken() && StorageService.getUser())
+  );
+
   const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
-  const [authRole, setAuthRole] = useState<UserRole>('Student');
+  const [authRole, setAuthRole] = useState<UserRole>("Student");
 
   // User Profile
-  const [user, setUser] = useState<UserProfile>({
-    name: 'Aarav',
-    role: 'Student',
-    credits: 240,
-    streak: 6,
-    avatarColor: '#B9E4E8',
-  });
+  const [user, setUser] = useState<UserProfile>(
+    () =>
+      StorageService.getUser() || {
+        name: "",
+        role: "Student",
+        credits: 0,
+        streak: 0,
+        avatarColor: "#B9E4E8",
+      }
+  );
 
   // Current View & Theme
-  const [currentView, setCurrentView] = useState<ActiveView>('home');
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [currentView, setCurrentView] = useState<ActiveView>("home");
+  const [theme, setTheme] = useState<"light" | "dark">("light");
   const [isOfflineMode, setIsOfflineMode] = useState<boolean>(false);
 
   // App Data
-  const [notes, setNotes] = useState<NoteItem[]>(INITIAL_NOTES);
+  const [notes, setNotes] = useState<NoteItem[]>([]);
   const [mentors, setMentors] = useState<MentorProfile[]>(INITIAL_MENTORS);
-  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Sync theme to root element
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
+    document.documentElement.setAttribute("data-theme", theme);
   }, [theme]);
 
   // Toast helper
@@ -66,6 +81,56 @@ export const App: React.FC = () => {
     }, 2400);
   };
 
+  // Fetch notes accessible to the logged-in student
+  useEffect(() => {
+    if (
+      !isAuthenticated ||
+      user.role !== "Student" ||
+      !StorageService.getToken()
+    ) {
+      return;
+    }
+
+    let cancelled = false;
+
+    const loadNotes = async () => {
+      try {
+        const response = (await ApiService.fetchNotes()) as {
+          id: string;
+          title: string;
+          subjectName: string;
+          createdAt: string;
+          fileType: string;
+        }[];
+
+        if (cancelled) return;
+
+        const backendNotes: NoteItem[] = response.map((note) => ({
+          id: note.id,
+          title: note.title,
+          subject: note.subjectName,
+          date: new Date(note.createdAt).toLocaleDateString(),
+          isOffline: false,
+          fileSize: note.fileType,
+        }));
+
+        setNotes(backendNotes);
+      } catch (error) {
+        console.error("Failed to fetch notes:", error);
+
+        if (!cancelled) {
+          showToast("Unable to load notes from the server.");
+        }
+      }
+    };
+
+    void loadNotes();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isAuthenticated, user.role]);
+
   // Credits helper
   const handleAddCredits = (amount: number, reason: string) => {
     setUser((prev) => ({ ...prev, credits: prev.credits + amount }));
@@ -74,22 +139,23 @@ export const App: React.FC = () => {
 
   // Toggle Theme
   const handleToggleTheme = () => {
-    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
+    setTheme((prev) => (prev === "light" ? "dark" : "light"));
   };
 
   // Search Submit
   const handleSearchSubmit = () => {
-    setCurrentView('notes');
+    setCurrentView("notes");
   };
 
   // Note actions
-  const handleAddNote = (newNoteData: Omit<NoteItem, 'id'>) => {
+  const handleAddNote = (newNoteData: Omit<NoteItem, "id">) => {
     const created: NoteItem = {
       ...newNoteData,
       id: Date.now().toString(),
     };
-    setNotes([created, ...notes]);
-    handleAddCredits(10, 'Uploaded note! +10 credits');
+
+    setNotes((prev) => [created, ...prev]);
+    handleAddCredits(10, "Uploaded note! +10 credits");
   };
 
   const handleToggleOfflineNote = (id: string) => {
@@ -102,7 +168,7 @@ export const App: React.FC = () => {
   const handleSendMessage = (mentorId: string, text: string) => {
     const userMsg = {
       id: Date.now().toString(),
-      sender: 'me' as const,
+      sender: "me" as const,
       text,
     };
 
@@ -114,6 +180,7 @@ export const App: React.FC = () => {
             messages: [...m.messages, userMsg],
           };
         }
+
         return m;
       })
     );
@@ -122,28 +189,30 @@ export const App: React.FC = () => {
     setTimeout(() => {
       const mentorReplies: Record<string, string[]> = {
         m1: [
-          'Excellent question! Look at the free body diagram and resolve the normal contact force along the inclined plane.',
-          'Review formula 4 in the Physics cheat sheet—it highlights why static friction exceeds kinetic friction.',
-          'Great progress Aarav! I have marked this doubt as resolved in your tracker.',
+          "Excellent question! Look at the free body diagram and resolve the normal contact force along the inclined plane.",
+          "Review formula 4 in the Physics cheat sheet—it highlights why static friction exceeds kinetic friction.",
+          "Great progress Aarav! I have marked this doubt as resolved in your tracker.",
         ],
         m2: [
-          'Substitute u = x² + 1 and du = 2x dx. The integral simplifies immediately.',
-          'Check your limits of integration when applying trigonometric substitution!',
-          'That solution is mathematically rigorous. Well done!',
+          "Substitute u = x² + 1 and du = 2x dx. The integral simplifies immediately.",
+          "Check your limits of integration when applying trigonometric substitution!",
+          "That solution is mathematically rigorous. Well done!",
         ],
         m3: [
-          'Notice your recursive base condition: if n <= 1 return n. Without that, you will trigger a stack overflow.',
-          'Your time complexity here is O(N log N) which is optimal for this sorting problem.',
-          'Code verified! Push this to your portfolio repository.',
+          "Notice your recursive base condition: if n <= 1 return n. Without that, you will trigger a stack overflow.",
+          "Your time complexity here is O(N log N) which is optimal for this sorting problem.",
+          "Code verified! Push this to your portfolio repository.",
         ],
       };
 
-      const repliesList = mentorReplies[mentorId] || mentorReplies['m1'];
-      const randomReply = repliesList[Math.floor(Math.random() * repliesList.length)];
+      const repliesList = mentorReplies[mentorId] || mentorReplies["m1"];
+
+      const randomReply =
+        repliesList[Math.floor(Math.random() * repliesList.length)];
 
       const mentorReplyMsg = {
         id: (Date.now() + 1).toString(),
-        sender: 'them' as const,
+        sender: "them" as const,
         text: randomReply,
       };
 
@@ -155,6 +224,7 @@ export const App: React.FC = () => {
               messages: [...m.messages, mentorReplyMsg],
             };
           }
+
           return m;
         })
       );
@@ -167,24 +237,25 @@ export const App: React.FC = () => {
       showToast(`Need ${cost - user.credits} more credits to unlock!`);
       return;
     }
+
     setUser((prev) => ({ ...prev, credits: prev.credits - cost }));
     showToast(`Claimed perk: ${title} 🎉`);
   };
 
   // Section title mapping
   const VIEW_TITLES: Record<ActiveView, string> = {
-    home: user.role === 'Student' ? 'Student Cockpit' : 'Mentor Dashboard',
-    notes: 'Smart Notes Library',
-    chat: 'Mentor Chat',
-    voice: 'Voice Study Rooms',
-    groups: 'Study Squads',
-    qa: 'Doubt Q&A Forum',
-    ai: 'AI Academic Assistant',
-    gap: 'Study Gap Recovery',
-    career: 'Career Roadmaps',
-    quiz: 'Assessments & Quizzes',
-    offline: 'Offline Learning',
-    rewards: 'Rewards & Perks Store',
+    home: user.role === "Student" ? "Student Cockpit" : "Mentor Dashboard",
+    notes: "Smart Notes Library",
+    chat: "Mentor Chat",
+    voice: "Voice Study Rooms",
+    groups: "Study Squads",
+    qa: "Doubt Q&A Forum",
+    ai: "AI Academic Assistant",
+    gap: "Study Gap Recovery",
+    career: "Career Roadmaps",
+    quiz: "Assessments & Quizzes",
+    offline: "Offline Learning",
+    rewards: "Rewards & Perks Store",
   };
 
   // If user is not logged in: show Landing Page or Auth Modal
@@ -193,9 +264,11 @@ export const App: React.FC = () => {
       return (
         <div className="relative min-h-screen">
           <ParticleCanvas />
+
           <AuthModal
             initialRole={authRole}
             onLogin={(profile) => {
+              StorageService.saveUser(profile);
               setUser(profile);
               setIsAuthenticated(true);
               setShowAuthModal(false);
@@ -203,6 +276,7 @@ export const App: React.FC = () => {
             }}
             onBackToHome={() => setShowAuthModal(false)}
           />
+
           <Toast message={toastMessage} />
         </div>
       );
@@ -211,19 +285,23 @@ export const App: React.FC = () => {
     return (
       <div className="relative min-h-screen">
         <ParticleCanvas />
+
         <LandingPage
-          onOpenLogin={(role = 'Student') => {
+          onOpenLogin={(role = "Student") => {
             setAuthRole(role);
             setShowAuthModal(true);
           }}
         />
+
         <Toast message={toastMessage} />
       </div>
     );
   }
 
   // Filter notes when in Offline Mode
-  const activeNotes = isOfflineMode ? notes.filter((n) => n.isOffline) : notes;
+  const activeNotes = isOfflineMode
+    ? notes.filter((n) => n.isOffline)
+    : notes;
 
   return (
     <div className="relative min-h-screen flex flex-col md:flex-row bg-[var(--bg)] text-[var(--ink)]">
@@ -235,11 +313,21 @@ export const App: React.FC = () => {
         currentView={currentView}
         onSelectView={(v) => {
           setCurrentView(v);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
+          window.scrollTo({ top: 0, behavior: "smooth" });
         }}
         onLogout={() => {
+          StorageService.clearAuth();
           setIsAuthenticated(false);
-          showToast('Signed out. See you next study session!');
+          setUser({
+            name: "",
+            role: "Student",
+            credits: 0,
+            streak: 0,
+            avatarColor: "#B9E4E8",
+          });
+          setNotes([]);
+          setShowAuthModal(false);
+          showToast("Signed out successfully!");
         }}
       />
 
@@ -252,7 +340,7 @@ export const App: React.FC = () => {
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
           onSearchSubmit={handleSearchSubmit}
-          onNavigateToRewards={() => setCurrentView('rewards')}
+          onNavigateToRewards={() => setCurrentView("rewards")}
           onToggleTheme={handleToggleTheme}
           currentTheme={theme}
         />
@@ -260,7 +348,10 @@ export const App: React.FC = () => {
         {/* Offline Banner */}
         {isOfflineMode && (
           <div className="bg-[var(--ink)] text-[var(--bg)] px-4 py-2 text-center text-xs font-bold border-b border-[var(--mango)] flex items-center justify-center gap-2">
-            <span>⚡ Offline Mode Active: Displaying cached materials only.</span>
+            <span>
+              ⚡ Offline Mode Active: Displaying cached materials only.
+            </span>
+
             <button
               onClick={() => setIsOfflineMode(false)}
               className="underline text-[var(--mango)] hover:opacity-80"
@@ -272,8 +363,8 @@ export const App: React.FC = () => {
 
         {/* Active View Container */}
         <main className="flex-1 p-4 sm:p-8 max-w-6xl w-full mx-auto">
-          {currentView === 'home' && (
-            user.role === 'Mentor' ? (
+          {currentView === "home" &&
+            (user.role === "Mentor" ? (
               <TeacherDashboardView
                 user={user}
                 notes={notes}
@@ -287,10 +378,9 @@ export const App: React.FC = () => {
                 onNavigate={setCurrentView}
                 onAddCredits={handleAddCredits}
               />
-            )
-          )}
+            ))}
 
-          {currentView === 'notes' && (
+          {currentView === "notes" && (
             <NotesView
               notes={activeNotes}
               searchTerm={searchTerm}
@@ -301,7 +391,7 @@ export const App: React.FC = () => {
             />
           )}
 
-          {currentView === 'chat' && (
+          {currentView === "chat" && (
             <ChatView
               mentors={mentors}
               onSendMessage={handleSendMessage}
@@ -309,7 +399,7 @@ export const App: React.FC = () => {
             />
           )}
 
-          {currentView === 'voice' && (
+          {currentView === "voice" && (
             <VoiceView
               rooms={INITIAL_VOICE_ROOMS}
               userName={user.name}
@@ -317,14 +407,14 @@ export const App: React.FC = () => {
             />
           )}
 
-          {currentView === 'groups' && (
+          {currentView === "groups" && (
             <GroupsView
               initialGroups={INITIAL_STUDY_GROUPS}
               onToast={showToast}
             />
           )}
 
-          {currentView === 'qa' && (
+          {currentView === "qa" && (
             <QAView
               initialQA={INITIAL_QA}
               userName={user.name}
@@ -333,9 +423,9 @@ export const App: React.FC = () => {
             />
           )}
 
-          {currentView === 'ai' && <AIView />}
+          {currentView === "ai" && <AIView />}
 
-          {currentView === 'gap' && (
+          {currentView === "gap" && (
             <GapRecoveryView
               notes={notes}
               onAddCredits={handleAddCredits}
@@ -343,28 +433,25 @@ export const App: React.FC = () => {
             />
           )}
 
-          {currentView === 'career' && <CareerRoadmapView />}
+          {currentView === "career" && <CareerRoadmapView />}
 
-          {currentView === 'quiz' && (
-            <QuizView
-              onAddCredits={handleAddCredits}
-              onToast={showToast}
-            />
+          {currentView === "quiz" && (
+            <QuizView onAddCredits={handleAddCredits} onToast={showToast} />
           )}
 
-          {currentView === 'offline' && (
+          {currentView === "offline" && (
             <OfflineView
               notes={notes}
               isOfflineMode={isOfflineMode}
               onToggleOfflineMode={() => setIsOfflineMode(!isOfflineMode)}
               onOpenNote={(note) => {
                 showToast(`Opening offline note: ${note.title}`);
-                setCurrentView('notes');
+                setCurrentView("notes");
               }}
             />
           )}
 
-          {currentView === 'rewards' && (
+          {currentView === "rewards" && (
             <RewardsView
               currentCredits={user.credits}
               onRedeem={handleRedeem}
