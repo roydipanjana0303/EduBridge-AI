@@ -1,0 +1,1 @@
+STOMP handlers belong here. Authenticate CONNECT and authorize subscriptions.

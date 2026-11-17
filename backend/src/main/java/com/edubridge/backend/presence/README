@@ -1,0 +1,1 @@
+Use Redis for shared presence in deployment; in-memory presence is only a local prototype.
