@@ -76,7 +76,8 @@ export const App: React.FC = () => {
     }
     if (!getAccessToken()) return;
     ApiService.fetchMe().then((account) => {
-      setUser((previous) => ({ ...previous, name: account.displayName, role: account.role === 'MENTOR' ? 'Mentor' : 'Student' }));
+      const displayName = account.name || account.displayName || 'User';
+      setUser((previous) => ({ ...previous, name: displayName, role: account.role === 'MENTOR' ? 'Mentor' : 'Student' }));
       setIsAuthenticated(true);
     }).catch(() => clearAccessToken());
   }, []);
@@ -251,11 +252,15 @@ export const App: React.FC = () => {
               }
               const result = await ApiService.login({ email: credentials.email, password: credentials.password });
               localStorage.removeItem('edubridge_demo_session');
-              setAccessToken(result.token);
-              setUser({ ...profile, name: result.user.displayName, role: result.user.role === 'MENTOR' ? 'Mentor' : 'Student' });
+              // Backend returns accessToken field (not token)
+              const jwtToken = result.accessToken || (result as { token?: string }).token || '';
+              setAccessToken(jwtToken);
+              const displayName = result.user.name || result.user.displayName || credentials.email;
+              const userRole = result.user.role === 'MENTOR' ? 'Mentor' : 'Student';
+              setUser({ ...profile, name: displayName, role: userRole });
               setIsAuthenticated(true);
               setShowAuthModal(false);
-              showToast(`Welcome, ${result.user.displayName}!`);
+              showToast(`Welcome, ${displayName}!`);
             }}
             onBackToHome={() => setShowAuthModal(false)}
           />

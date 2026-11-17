@@ -9,6 +9,7 @@ import com.edubridge.backend.user.entity.User;
 public record UserResponse(
     UUID id,
     String name,
+    String displayName,   // alias for name — frontend expects displayName
     String email,
     Role role
 ) {
@@ -16,6 +17,7 @@ public record UserResponse(
         return new UserResponse(
             user.getId(),
             user.getName(),
+            user.getName(),   // displayName == name
             user.getEmail(),
             user.getRole()
         );

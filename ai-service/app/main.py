@@ -5,6 +5,7 @@ from typing import Literal
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from google import genai
 from google.genai import types
@@ -23,7 +24,7 @@ logging.basicConfig(
 logger = logging.getLogger("EduBridgeAI")
 
 API_KEY = os.getenv("GEMINI_API_KEY")
-MODEL = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
+MODEL = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
 
 client = None
 
@@ -33,12 +34,29 @@ if API_KEY:
         http_options=types.HttpOptions(timeout=60000)
     )
 else:
-    logger.warning("Gemini API key is missing!")
+    logger.warning("Gemini API key is missing! Set GEMINI_API_KEY in ai-service/.env")
 
 app = FastAPI(
     title="EduBridge AI - LLM Service",
-    description="AI-powered educational assistant using Gemini",
-    version="1.1.0"
+    description="AI-powered educational assistant using Google Gemini",
+    version="1.2.0"
+)
+
+# --------------------------------------------------
+# CORS — Allow frontend on port 3000 and 5173
+# --------------------------------------------------
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:5173",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # --------------------------------------------------
@@ -119,7 +137,6 @@ class ChatRequest(BaseModel):
 
 @app.get("/health")
 def health():
-
     return {
         "status": "running",
         "service": "EduBridge AI LLM",
@@ -130,27 +147,23 @@ def health():
 
 
 # --------------------------------------------------
-# GEMINI CHAT ENDPOINT
+# INTERNAL CHAT LOGIC
 # --------------------------------------------------
 
-@app.post("/llm/chat")
-def chat(request: ChatRequest):
-
+def _do_chat(request: ChatRequest) -> dict:
     if client is None:
         raise HTTPException(
             status_code=503,
-            detail="Gemini API key is not configured."
+            detail="Gemini API key is not configured. Add GEMINI_API_KEY to ai-service/.env"
         )
 
     try:
-
         logger.info("Received student question")
 
         contents = []
 
         # Add conversation history
         for turn in request.history:
-
             role = (
                 "model"
                 if turn.role == "assistant"
@@ -214,8 +227,6 @@ def chat(request: ChatRequest):
         raise
 
     except Exception as e:
-
-        # Print actual error in terminal
         logger.exception(
             "Gemini API request failed: %s",
             type(e).__name__
@@ -223,8 +234,27 @@ def chat(request: ChatRequest):
 
         raise HTTPException(
             status_code=502,
-            detail="Gemini API request failed. Check server logs."
+            detail=f"Gemini API request failed: {type(e).__name__}. Check server logs."
         )
+
+
+# --------------------------------------------------
+# PRIMARY CHAT ENDPOINT
+# --------------------------------------------------
+
+@app.post("/llm/chat")
+def chat(request: ChatRequest):
+    return _do_chat(request)
+
+
+# --------------------------------------------------
+# ALIAS ENDPOINT (frontend calls /ai/chat)
+# --------------------------------------------------
+
+@app.post("/ai/chat")
+def chat_alias(request: ChatRequest):
+    return _do_chat(request)
+
 
 # --------------------------------------------------
 # ROOT ENDPOINT
@@ -232,8 +262,12 @@ def chat(request: ChatRequest):
 
 @app.get("/")
 def home():
-
     return {
         "message": "Welcome to EduBridge AI LLM Service",
-        "status": "active"
+        "status": "active",
+        "endpoints": {
+            "health": "/health",
+            "chat": "/llm/chat  or  /ai/chat",
+            "docs": "/docs"
+        }
     }

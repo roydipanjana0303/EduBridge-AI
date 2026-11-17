@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { ApiService } from '../services/api';
 
 interface AIMessage {
   id: string;
@@ -6,14 +7,20 @@ interface AIMessage {
   text: string;
 }
 
+interface ConversationTurn {
+  role: 'user' | 'model';
+  content: string;
+}
+
 export const AIView: React.FC = () => {
   const [messages, setMessages] = useState<AIMessage[]>([
     {
       id: '1',
       sender: 'ai',
-      text: 'Namaste! I am your EduBridge Academic Assistant. I can ground explanations in your uploaded notes, break down tricky equations, generate practice quiz questions, or design your weekly study timetable.',
+      text: 'Namaste! I am your EduBridge Academic Assistant powered by Google Gemini AI. I can explain concepts step-by-step, break down tricky equations, generate practice quiz questions, or design your weekly study timetable. How can I help you today?',
     },
   ]);
+  const [history, setHistory] = useState<ConversationTurn[]>([]);
   const [inputVal, setInputVal] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const endRef = useRef<HTMLDivElement | null>(null);
@@ -24,47 +31,58 @@ export const AIView: React.FC = () => {
 
   const QUICK_PROMPTS = [
     'Explain Photosynthesis & Light Reactions',
-    'Quiz me on Newton’s Laws',
+    'Quiz me on Newton\'s Laws',
     'Plan my study week for Boards',
     'Derive Kinetic Energy Formula',
     'Difference between Stack and Queue',
   ];
 
-  const handleAsk = (queryText?: string) => {
+  const handleAsk = async (queryText?: string) => {
     const q = (queryText || inputVal).trim();
-    if (!q) return;
+    if (!q || isTyping) return;
 
     const userMsg: AIMessage = { id: Date.now().toString(), sender: 'me', text: q };
     setMessages((prev) => [...prev, userMsg]);
     setInputVal('');
     setIsTyping(true);
 
-    setTimeout(() => {
-      let reply = '';
-      const lower = q.toLowerCase();
+    // Build new history entry
+    const newHistory: ConversationTurn[] = [...history, { role: 'user', content: q }];
 
-      if (lower.includes('photo')) {
-        reply =
-          '🌱 Photosynthesis is the biochemical process by which plants convert light energy into chemical energy stored in glucose:\n\n1. Light-Dependent Reactions (in Thylakoid membranes): Chlorophyll absorbs photons, splitting H₂O into electrons, protons, and releasing O₂. ATP and NADPH are synthesized.\n2. Light-Independent Calvin Cycle (in Stroma): Carbon fixation uses ATP and NADPH to convert CO₂ into 3-carbon sugars (G3P).\n\n💡 Pro Tip: Think of thylakoids as solar panels, and stroma as the sugar factory!';
-      } else if (lower.includes('newton') || lower.includes('force')) {
-        reply =
-          '⚡ Newton’s Laws in a nutshell:\n\n1. 1st Law (Inertia): An object remains at rest or constant velocity unless acted upon by a net external force.\n2. 2nd Law (Dynamics): Net force equals rate of change of momentum (F = dp/dt = m · a for constant mass).\n3. 3rd Law (Action-Reaction): Whenever object A exerts a force on object B, object B exerts an equal and opposite force on object A (FAB = -FBA).\n\nNotice: Action and reaction act on DIFFERENT bodies, which is why they never cancel each other out!';
-      } else if (lower.includes('quiz')) {
-        reply =
-          '🎯 Quick Practice Question:\n\n"A ball is thrown vertically upward with velocity v. At the highest point of its trajectory, what are its velocity and acceleration?"\n\nOptions:\nA) v = 0, a = 0\nB) v = 0, a = 9.8 m/s² downward\nC) v = v, a = 9.8 m/s² upward\n\nTake your guess, or visit the Assessments tab for full scored practice with credit points!';
-      } else if (lower.includes('plan') || lower.includes('week')) {
-        reply =
-          '📅 Optimal 7-Day Study Cadence:\n\n• Monday: Physics mechanics & concept notes revision (2 hrs)\n• Tuesday: Calculus problem sets (Integration substitution) (1.5 hrs)\n• Wednesday: Organic chemistry reaction mechanisms + Q&A doubt resolution (2 hrs)\n• Thursday: Computer Science DSA / Python data structures (1.5 hrs)\n• Friday: Weekly mock quiz in Assessments tab + weak area review (2 hrs)\n• Weekend: Join voice study rooms for group recap + Study Gap Recovery plan review.';
-      } else {
-        reply = `Great query on "${q}"! Let’s break it down into first principles:\n\n1. Core Definition: Identify the underlying fundamental definitions and governing laws.\n2. Step-by-Step Derivation: Analyze how boundary constraints or formulas apply.\n3. Common Pitfall: Many students confuse intuition with formal proofs here. Review your saved notes in the Notes Library for grounded reference.\n\nWould you like me to generate a 2-question test on this topic?`;
-      }
+    try {
+      const response = await ApiService.askAI({
+        message: q,
+        history: history,
+      });
+
+      const aiText = response.answer || 'Sorry, I could not generate a response. Please try again.';
 
       setMessages((prev) => [
         ...prev,
-        { id: (Date.now() + 1).toString(), sender: 'ai', text: reply },
+        { id: (Date.now() + 1).toString(), sender: 'ai', text: aiText },
       ]);
+
+      // Update history with both user msg and AI response
+      setHistory([...newHistory, { role: 'model', content: aiText }]);
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: (Date.now() + 1).toString(),
+          sender: 'ai',
+          text: 'The AI service is currently starting up. Please ensure the ai-service is running (run `start.bat` in the ai-service folder), then try again.',
+        },
+      ]);
+    } finally {
       setIsTyping(false);
-    }, 750);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      void handleAsk();
+    }
   };
 
   return (
@@ -74,7 +92,7 @@ export const AIView: React.FC = () => {
           AI Academic Assistant
         </h2>
         <p className="text-sm opacity-75 mt-0.5">
-          Ask questions grounded in your course materials, request concept breakdowns, or get a custom revision plan.
+          Powered by Google Gemini AI — Ask questions, request concept breakdowns, or get a custom revision plan.
         </p>
       </div>
 
@@ -97,7 +115,7 @@ export const AIView: React.FC = () => {
                 >
                   {!isMe && (
                     <div className="flex items-center gap-1.5 text-[11px] font-black text-[var(--chilli)] mb-1 uppercase tracking-wider">
-                      <span>✨</span> EduBridge AI Assistant
+                      <span>✨</span> EduBridge AI (Gemini)
                     </div>
                   )}
                   {m.text}
@@ -110,7 +128,7 @@ export const AIView: React.FC = () => {
             <div className="flex justify-start">
               <div className="p-3 rounded-2xl bg-[var(--soft)] text-xs font-bold text-[var(--chilli)] flex items-center gap-2 border border-[var(--ink)]/15">
                 <span className="live-dot" />
-                <span>AI is formulating grounded response...</span>
+                <span>Gemini AI is generating a response...</span>
               </div>
             </div>
           )}
@@ -122,8 +140,9 @@ export const AIView: React.FC = () => {
           {QUICK_PROMPTS.map((prompt, idx) => (
             <button
               key={idx}
-              onClick={() => handleAsk(prompt)}
-              className="eb-chip text-[11px] py-1 hover:border-[var(--chilli)]"
+              onClick={() => void handleAsk(prompt)}
+              disabled={isTyping}
+              className="eb-chip text-[11px] py-1 hover:border-[var(--chilli)] disabled:opacity-50"
             >
               {prompt}
             </button>
@@ -137,14 +156,16 @@ export const AIView: React.FC = () => {
             placeholder="Ask anything about your syllabus or saved notes..."
             value={inputVal}
             onChange={(e) => setInputVal(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleAsk()}
-            className="eb-input py-2 text-sm flex-1"
+            onKeyDown={handleKeyDown}
+            disabled={isTyping}
+            className="eb-input py-2 text-sm flex-1 disabled:opacity-60"
           />
           <button
-            onClick={() => handleAsk()}
-            className="eb-btn red text-sm font-black px-5"
+            onClick={() => void handleAsk()}
+            disabled={isTyping || !inputVal.trim()}
+            className="eb-btn red text-sm font-black px-5 disabled:opacity-50"
           >
-            Ask AI ↵
+            {isTyping ? '...' : 'Ask AI ↵'}
           </button>
         </div>
       </div>

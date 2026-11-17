@@ -1,1 +1,1 @@
-package com.edubridge.chat; import java.util.*; import org.springframework.data.jpa.repository.JpaRepository; public interface ChannelRepository extends JpaRepository<ChatChannel,UUID>{List<ChatChannel> findByServer_Id(UUID serverId);}
+package com.edubridge.chat; import java.util.*; import org.springframework.data.jpa.repository.JpaRepository; public interface ChannelRepository extends JpaRepository<ChatChannel,UUID>{List<ChatChannel> findByServer_Id(UUID serverId); default List<ChatChannel> findByServerId(UUID serverId){return findByServer_Id(serverId);} }

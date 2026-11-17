@@ -7,12 +7,9 @@ __pycache__/
 # Virtual environment
 .venv/
 venv/
-env/
+
 
 # Environment variables and API keys
-.env
-.env.*
-!.env.example
 
 # Python packaging
 build/
