@@ -1,3 +1,4 @@
+
 import logging
 import zipfile
 from io import BytesIO
@@ -7,9 +8,14 @@ import pymupdf
 from docx import Document
 from pptx import Presentation
 
+from app.services.text_chunker import chunk_text
+
 logger = logging.getLogger(__name__)
 
 SUPPORTED_FORMATS = {".pdf", ".docx", ".pptx"}
+
+CHUNK_SIZE = 500
+CHUNK_OVERLAP = 50
 
 
 def validate_content(extension, file_bytes):
@@ -20,7 +26,6 @@ def validate_content(extension, file_bytes):
             raise ValueError("This file is not a valid PDF.")
         return
 
-    # DOCX and PPTX files are ZIP archives with specific internal files
     required_file = (
         "word/document.xml" if extension == ".docx"
         else "ppt/presentation.xml"
@@ -40,6 +45,7 @@ def validate_content(extension, file_bytes):
 
 def extract_pdf(file_bytes):
     """Extract text from each PDF page."""
+
     results = []
 
     try:
@@ -64,6 +70,7 @@ def extract_pdf(file_bytes):
 
 def extract_docx(file_bytes):
     """Extract paragraphs and tables from a Word document."""
+
     document = Document(BytesIO(file_bytes))
     text_parts = []
 
@@ -83,6 +90,7 @@ def extract_docx(file_bytes):
 
 def extract_pptx(file_bytes):
     """Extract text from each PowerPoint slide."""
+
     presentation = Presentation(BytesIO(file_bytes))
     results = []
 
@@ -109,8 +117,42 @@ def extract_pptx(file_bytes):
     return results
 
 
+def create_chunks(sections, extension):
+    """Create text chunks while preserving their original references."""
+
+    chunks = []
+
+    for section in sections:
+        section_text = section.get("text", "")
+
+        section_chunks = chunk_text(
+            section_text,
+            chunk_size=CHUNK_SIZE,
+            overlap=CHUNK_OVERLAP
+        )
+
+        for chunk in section_chunks:
+            chunk_data = {
+                "chunk_index": len(chunks) + 1,
+                "text": chunk
+            }
+
+            if extension == ".pdf":
+                chunk_data["page"] = section.get("page")
+
+            elif extension == ".pptx":
+                chunk_data["slide"] = section.get("slide")
+
+            elif extension == ".docx":
+                chunk_data["page"] = None
+
+            chunks.append(chunk_data)
+
+    return chunks
+
+
 def process_document(filename, file_bytes):
-    """Identify document format and extract its text."""
+    """Extract document text and create RAG-ready chunks."""
 
     extension = Path(filename).suffix.lower()
 
@@ -131,7 +173,7 @@ def process_document(filename, file_bytes):
             sections = extract_pptx(file_bytes)
 
     except ValueError:
-        raise  # our own friendly messages: pass them on unchanged
+        raise
 
     except Exception:
         logger.exception("Failed to extract text from %s", filename)
@@ -149,9 +191,11 @@ def process_document(filename, file_bytes):
             "OCR support is not available yet."
         )
 
+    chunks = create_chunks(sections, extension)
+
     logger.info(
-        "Processed %s: %d sections, %d characters",
-        filename, len(sections), len(extracted_text)
+        "Processed %s: %d sections, %d characters, %d chunks",
+        filename, len(sections), len(extracted_text), len(chunks)
     )
 
     return {
@@ -159,5 +203,7 @@ def process_document(filename, file_bytes):
         "file_type": extension.replace(".", ""),
         "total_sections": len(sections),
         "sections": sections,
-        "full_text": extracted_text
+        "full_text": extracted_text,
+        "total_chunks": len(chunks),
+        "chunks": chunks
     }
