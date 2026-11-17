@@ -1,0 +1,1 @@
+Message request/response DTOs belong here; never serialize User entities.
