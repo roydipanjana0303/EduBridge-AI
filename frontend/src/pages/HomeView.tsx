@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { UserProfile, ActiveView } from '../types';
-import { AppIcon } from '../components/Icons';
 
 interface HomeViewProps {
   user: UserProfile;

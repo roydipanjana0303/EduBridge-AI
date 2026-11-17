@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MentorProfile } from '../types';
-import { AppIcon } from '../components/Icons';
 
 interface ChatViewProps {
   mentors: MentorProfile[];
