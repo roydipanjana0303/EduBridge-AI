@@ -6,8 +6,8 @@
  * - Member 4: FastAPI AI Service (Chatbot, Study Gap Recovery, Career Roadmap)
  */
 
-const API_BASE_URL = (typeof process !== 'undefined' && process.env?.VITE_API_BASE_URL) || 'http://localhost:8080/api';
-const AI_SERVICE_URL = (typeof process !== 'undefined' && process.env?.VITE_AI_SERVICE_URL) || 'http://localhost:8000';
+const API_BASE_URL = (import.meta.env?.VITE_API_BASE_URL as string) || 'http://localhost:8080/api';
+const AI_SERVICE_URL = (import.meta.env?.VITE_AI_SERVICE_URL as string) || 'http://localhost:8000';
 
 export interface AskAIRequest {
   message: string;

@@ -39,7 +39,7 @@ export const TeacherDashboardView: React.FC<TeacherDashboardProps> = ({
 
   // Quick Quiz Creator state
   const [quizQuestion, setQuizQuestion] = useState('');
-  const [quizSubject, setQuizSubject] = useState('Physics');
+  const [quizSubject] = useState('Physics');
   const [optA, setOptA] = useState('');
   const [optB, setOptB] = useState('');
   const [optC, setOptC] = useState('');
