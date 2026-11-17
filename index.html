@@ -1,416 +1,1485 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>EduBridge AI — Learn Together. Connect Better.</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#EEEEEE;--ink:#071B2B;--card:#fff;--mango:#B9E4E8;--chilli:#167D8D;--mint:#167D8D;--sky:#B9E4E8;--soft:#E1EEF0;--dot:#d9e2e4;color-scheme:light}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#071B2B;--ink:#EEEEEE;--card:#0E2A40;--soft:#16374F;--dot:#0d2438;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#071B2B;--ink:#EEEEEE;--card:#0E2A40;--soft:#16374F;--dot:#0d2438;color-scheme:dark}
-*{box-sizing:border-box;margin:0}
-html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);scroll-behavior:smooth}
-body{background:var(--bg);background-image:radial-gradient(var(--dot) 1.5px,transparent 1.5px);background-size:22px 22px;color:var(--ink);font:400 15px/1.5 'Inter',system-ui,sans-serif;min-height:100vh}
-h1,h2,h3,.logo{font-family:'Plus Jakarta Sans','Inter',sans-serif;line-height:1.15}
-button,input,select,textarea{font:inherit;color:inherit}
-:focus-visible{outline:3px solid var(--chilli);outline-offset:2px}
-.card{background:var(--card);border:1.5px solid var(--ink);border-radius:14px;box-shadow:0 6px 20px rgba(7,27,43,.08);padding:18px}
-.btn{background:var(--mango);color:#071B2B;border:1.5px solid var(--ink);border-radius:10px;padding:8px 18px;font-weight:700;cursor:pointer;box-shadow:none;transition:transform .12s,box-shadow .12s;display:inline-flex;align-items:center;justify-content:center;gap:6px}
-.btn:hover{transform:translate(-1px,-1px);box-shadow:3px 3px 0 var(--ink)}
-.btn:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
-.btn.red{background:var(--chilli);color:#fff}.btn.mint{background:var(--mint);color:#fff}.btn.ghost{background:var(--card);color:var(--ink)}.btn.sm{padding:4px 12px;font-size:13px}
-input,select,textarea{background:var(--card);border:1.5px solid var(--ink);border-radius:12px;padding:9px 12px;width:100%}
-.chip{display:inline-flex;align-items:center;border:1.5px solid var(--ink);border-radius:10px;padding:2px 12px;font-size:13px;font-weight:700;background:var(--soft);cursor:pointer}
-.chip.on{background:var(--ink);color:var(--bg)}
-.tag{border:1.5px solid var(--ink);border-radius:8px;padding:2px 8px;font-size:12px;font-weight:700;color:#071B2B;display:inline-block}
-.grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
-.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.sp{justify-content:space-between}
-.muted{opacity:.75;font-size:13px}
-.bar{height:12px;border:1.5px solid var(--ink);border-radius:99px;background:var(--soft);overflow:hidden}.bar i{display:block;height:100%;background:var(--mint);transition:width .6s}
-.av{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--ink);display:grid;place-items:center;font-weight:800;color:#071B2B;flex:none}
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>EduBridge AI — Learn Together. Connect Better.</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #eeeeee;
+        --ink: #071b2b;
+        --card: #fff;
+        --mango: #b9e4e8;
+        --chilli: #167d8d;
+        --mint: #167d8d;
+        --sky: #b9e4e8;
+        --soft: #e1eef0;
+        --dot: #d9e2e4;
+        color-scheme: light;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          --bg: #071b2b;
+          --ink: #eeeeee;
+          --card: #0e2a40;
+          --soft: #16374f;
+          --dot: #0d2438;
+          color-scheme: dark;
+        }
+      }
+      :root[data-theme="dark"] {
+        --bg: #071b2b;
+        --ink: #eeeeee;
+        --card: #0e2a40;
+        --soft: #16374f;
+        --dot: #0d2438;
+        color-scheme: dark;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+      }
+      html {
+        padding-top: env(safe-area-inset-top, 0px);
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+        scroll-behavior: smooth;
+      }
+      body {
+        background: var(--bg);
+        background-image: radial-gradient(var(--dot) 1.5px, transparent 1.5px);
+        background-size: 22px 22px;
+        color: var(--ink);
+        font: 400 15px/1.5 "Inter", system-ui, sans-serif;
+        min-height: 100vh;
+      }
+      h1,
+      h2,
+      h3,
+      .logo {
+        font-family: "Plus Jakarta Sans", "Inter", sans-serif;
+        line-height: 1.15;
+      }
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+        color: inherit;
+      }
+      :focus-visible {
+        outline: 3px solid var(--chilli);
+        outline-offset: 2px;
+      }
+      .card {
+        background: var(--card);
+        border: 1.5px solid var(--ink);
+        border-radius: 14px;
+        box-shadow: 0 6px 20px rgba(7, 27, 43, 0.08);
+        padding: 18px;
+      }
+      .btn {
+        background: var(--mango);
+        color: #071b2b;
+        border: 1.5px solid var(--ink);
+        border-radius: 10px;
+        padding: 8px 18px;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: none;
+        transition: transform 0.12s, box-shadow 0.12s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+      .btn:hover {
+        transform: translate(-1px, -1px);
+        box-shadow: 3px 3px 0 var(--ink);
+      }
+      .btn:active {
+        transform: translate(2px, 2px);
+        box-shadow: 0 0 0 var(--ink);
+      }
+      .btn.red {
+        background: var(--chilli);
+        color: #fff;
+      }
+      .btn.mint {
+        background: var(--mint);
+        color: #fff;
+      }
+      .btn.ghost {
+        background: var(--card);
+        color: var(--ink);
+      }
+      .btn.sm {
+        padding: 4px 12px;
+        font-size: 13px;
+      }
+      input,
+      select,
+      textarea {
+        background: var(--card);
+        border: 1.5px solid var(--ink);
+        border-radius: 12px;
+        padding: 9px 12px;
+        width: 100%;
+      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        border: 1.5px solid var(--ink);
+        border-radius: 10px;
+        padding: 2px 12px;
+        font-size: 13px;
+        font-weight: 700;
+        background: var(--soft);
+        cursor: pointer;
+      }
+      .chip.on {
+        background: var(--ink);
+        color: var(--bg);
+      }
+      .tag {
+        border: 1.5px solid var(--ink);
+        border-radius: 8px;
+        padding: 2px 8px;
+        font-size: 12px;
+        font-weight: 700;
+        color: #071b2b;
+        display: inline-block;
+      }
+      .grid {
+        display: grid;
+        gap: 18px;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      }
+      .row {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .sp {
+        justify-content: space-between;
+      }
+      .muted {
+        opacity: 0.75;
+        font-size: 13px;
+      }
+      .bar {
+        height: 12px;
+        border: 1.5px solid var(--ink);
+        border-radius: 99px;
+        background: var(--soft);
+        overflow: hidden;
+      }
+      .bar i {
+        display: block;
+        height: 100%;
+        background: var(--mint);
+        transition: width 0.6s;
+      }
+      .av {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: 1.5px solid var(--ink);
+        display: grid;
+        place-items: center;
+        font-weight: 800;
+        color: #071b2b;
+        flex: none;
+      }
 
-/* landing */
-#land{max-width:1000px;margin:0 auto;padding:28px 20px 60px}
-.logo{font-size:24px;font-weight:800;display:flex;align-items:center;gap:8px}.logo b{color:var(--chilli)}
-.hero{display:grid;grid-template-columns:1.2fr 1fr;gap:34px;align-items:center;margin-top:44px}
-.hero h1{font-size:clamp(38px,6.5vw,66px);font-weight:800;letter-spacing:-1.5px}
-.hl{background:linear-gradient(transparent 60%,var(--mango) 60%)}
-.hero p{margin:16px 0 22px;font-size:17px;max-width:46ch}
-.tabs{display:flex;gap:8px;margin-bottom:14px}
-.tabs button{flex:1}
-.feat{margin-top:56px;display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
-.feat div{border:1.5px solid var(--ink);border-radius:14px;padding:12px;background:var(--card);font-weight:700;font-size:14px}
-.sticker{position:relative}
-.sticker:after{content:"Free demo";position:absolute;top:-14px;right:-8px;background:var(--chilli);color:#fff;font-weight:800;border:1.5px solid var(--ink);border-radius:10px;padding:2px 10px;transform:rotate(5deg);font-size:13px}
+      /* landing */
+      #land {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 28px 20px 60px;
+      }
+      .logo {
+        font-size: 24px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .logo b {
+        color: var(--chilli);
+      }
+      .hero {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: 34px;
+        align-items: center;
+        margin-top: 44px;
+      }
+      .hero h1 {
+        font-size: clamp(38px, 6.5vw, 66px);
+        font-weight: 800;
+        letter-spacing: -1.5px;
+      }
+      .hl {
+        background: linear-gradient(transparent 60%, var(--mango) 60%);
+      }
+      .hero p {
+        margin: 16px 0 22px;
+        font-size: 17px;
+        max-width: 46ch;
+      }
+      .tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 14px;
+      }
+      .tabs button {
+        flex: 1;
+      }
+      .feat {
+        margin-top: 56px;
+        display: grid;
+        gap: 14px;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      }
+      .feat div {
+        border: 1.5px solid var(--ink);
+        border-radius: 14px;
+        padding: 12px;
+        background: var(--card);
+        font-weight: 700;
+        font-size: 14px;
+      }
+      .sticker {
+        position: relative;
+      }
+      .sticker:after {
+        content: "Free demo";
+        position: absolute;
+        top: -14px;
+        right: -8px;
+        background: var(--chilli);
+        color: #fff;
+        font-weight: 800;
+        border: 1.5px solid var(--ink);
+        border-radius: 10px;
+        padding: 2px 10px;
+        transform: rotate(5deg);
+        font-size: 13px;
+      }
 
-/* app */
-#app{display:none;grid-template-columns:230px 1fr;min-height:100vh}
-nav{padding:20px 14px;border-right:1.5px solid var(--ink);background:var(--card);position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;gap:4px}
-nav .logo{margin:0 6px 14px}
-nav button{display:flex;gap:10px;align-items:center;background:none;border:1.5px solid transparent;border-radius:12px;padding:7px 10px;cursor:pointer;font-weight:500;text-align:left;font-size:14px}
-nav button:hover{background:var(--soft)}
-nav button.on{background:var(--chilli);color:#fff;border-color:transparent;font-weight:700}
-nav button svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
-main{padding:26px clamp(14px,3vw,36px) 60px;min-width:0;max-width:1100px}
-main h2{font-size:clamp(26px,4vw,38px);font-weight:800;margin-bottom:4px}
-main>.muted{margin-bottom:20px}
-.chat{display:grid;grid-template-columns:210px 1fr;gap:18px}
-.msgs{height:340px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:4px}
-.m{max-width:80%;padding:9px 14px;border:1.5px solid var(--ink);border-radius:16px;background:var(--soft);font-size:14px}
-.m.me{align-self:flex-end;background:var(--mango);color:#071B2B}
-.list button{width:100%;display:flex;gap:8px;align-items:center;background:none;border:1.5px solid transparent;border-radius:12px;padding:8px;cursor:pointer;text-align:left}
-.list button.on{background:var(--soft);border-color:var(--ink)}
-.opt{display:block;width:100%;text-align:left;margin:8px 0;background:var(--card);border:1.5px solid var(--ink);border-radius:12px;padding:10px 14px;cursor:pointer;font-weight:500;font-size:14px}
-.opt:hover{background:var(--soft)}.opt.ok{background:var(--mango);color:#071B2B;font-weight:700}.opt.no{background:var(--chilli);color:#fff;font-weight:700}
-.tl{border-left:3px dashed var(--ink);margin-left:12px;padding-left:22px;display:grid;gap:16px}
-.tl div{position:relative}.tl div:before{content:"";position:absolute;left:-31px;top:5px;width:14px;height:14px;border-radius:50%;background:var(--chilli);border:1.5px solid var(--ink)}
-.banner{background:var(--ink);color:var(--bg);text-align:center;padding:6px;font-weight:700;display:none;font-size:13px}
-#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,120px);background:var(--ink);color:var(--bg);padding:9px 18px;border-radius:10px;font-weight:700;font-size:14px;transition:transform .3s;z-index:99;border:1px solid var(--mango)}
-#toast.s{transform:translate(-50%,0)}
-.live{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--mint);box-shadow:0 0 0 0 var(--mint);animation:p 1.6s infinite}
-@keyframes p{70%{box-shadow:0 0 0 8px transparent}}
-#land,#app,#web{position:relative;z-index:1}
-#pt{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
-.top{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:12px;padding:10px clamp(14px,3vw,36px);background:var(--card);border-bottom:1.5px solid var(--ink)}
-.top h1{font-size:18px;font-weight:800;white-space:nowrap}
-.top input{max-width:240px;padding:6px 12px;font-size:13px}
-.top .sp1{flex:1}
-.top .pill{border:1.5px solid var(--ink);border-radius:10px;padding:4px 12px;font-weight:700;background:var(--mango);color:#071B2B;cursor:pointer;font-size:13px}
-.top .ib{background:none;border:1.5px solid var(--ink);border-radius:10px;width:34px;height:34px;display:grid;place-items:center;cursor:pointer}
-.top .ib svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.top .who{display:flex;align-items:center;gap:8px;font-weight:700;line-height:1.1;font-size:13px}.top .who small{display:block;font-weight:400;opacity:.7}
-.wn{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:24px;padding:16px 20px}
-.wl{display:flex;gap:22px;margin:0 auto}.wl a{color:inherit;text-decoration:none;font-weight:600;font-size:14px}.wl a:hover{color:var(--chilli)}
-.ws{max-width:1100px;margin:0 auto;padding:40px 20px}
-.whero{display:grid;grid-template-columns:1.15fr 1fr;gap:40px;align-items:center}
-.whero h1{font-size:clamp(36px,5.5vw,60px);font-weight:800;letter-spacing:-1.5px;margin:12px 0}
-.whero p{font-size:17px;max-width:48ch;margin-bottom:20px}
-.wh2{font-size:clamp(26px,4vw,36px);font-weight:800;margin-bottom:8px}
-.step{display:flex;gap:14px}.num{width:38px;height:38px;border-radius:10px;background:var(--chilli);color:#fff;display:grid;place-items:center;font-weight:800;flex:none}
-.cta{background:var(--chilli);color:#fff;border-radius:18px;padding:38px 24px;text-align:center;border:1.5px solid var(--ink)}
-.fi{width:40px;height:40px;border-radius:10px;background:var(--mango);color:#071B2B;display:grid;place-items:center;margin-bottom:10px}
-.fi svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-@media (max-width:760px){
-.hero,.whero{grid-template-columns:1fr}
-#app{grid-template-columns:1fr}
-nav{position:static;height:auto;flex-direction:row;overflow-x:auto;border-right:0;border-bottom:1.5px solid var(--ink);padding:8px}
-nav .logo{display:none}nav button{white-space:nowrap}
-.chat{grid-template-columns:1fr}
-.wl{display:none}.top input,.top .who span{display:none}
-}
-</style>
-</head>
-<body>
-<canvas id="pt" aria-hidden="true"></canvas>
+      /* app */
+      #app {
+        display: none;
+        grid-template-columns: 230px 1fr;
+        min-height: 100vh;
+      }
+      nav {
+        padding: 20px 14px;
+        border-right: 1.5px solid var(--ink);
+        background: var(--card);
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      nav .logo {
+        margin: 0 6px 14px;
+      }
+      nav button {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        background: none;
+        border: 1.5px solid transparent;
+        border-radius: 12px;
+        padding: 7px 10px;
+        cursor: pointer;
+        font-weight: 500;
+        text-align: left;
+        font-size: 14px;
+      }
+      nav button:hover {
+        background: var(--soft);
+      }
+      nav button.on {
+        background: var(--chilli);
+        color: #fff;
+        border-color: transparent;
+        font-weight: 700;
+      }
+      nav button svg {
+        width: 18px;
+        height: 18px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        flex: none;
+      }
+      main {
+        padding: 26px clamp(14px, 3vw, 36px) 60px;
+        min-width: 0;
+        max-width: 1100px;
+      }
+      main h2 {
+        font-size: clamp(26px, 4vw, 38px);
+        font-weight: 800;
+        margin-bottom: 4px;
+      }
+      main > .muted {
+        margin-bottom: 20px;
+      }
+      .chat {
+        display: grid;
+        grid-template-columns: 210px 1fr;
+        gap: 18px;
+      }
+      .msgs {
+        height: 340px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 4px;
+      }
+      .m {
+        max-width: 80%;
+        padding: 9px 14px;
+        border: 1.5px solid var(--ink);
+        border-radius: 16px;
+        background: var(--soft);
+        font-size: 14px;
+      }
+      .m.me {
+        align-self: flex-end;
+        background: var(--mango);
+        color: #071b2b;
+      }
+      .list button {
+        width: 100%;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        background: none;
+        border: 1.5px solid transparent;
+        border-radius: 12px;
+        padding: 8px;
+        cursor: pointer;
+        text-align: left;
+      }
+      .list button.on {
+        background: var(--soft);
+        border-color: var(--ink);
+      }
+      .opt {
+        display: block;
+        width: 100%;
+        text-align: left;
+        margin: 8px 0;
+        background: var(--card);
+        border: 1.5px solid var(--ink);
+        border-radius: 12px;
+        padding: 10px 14px;
+        cursor: pointer;
+        font-weight: 500;
+        font-size: 14px;
+      }
+      .opt:hover {
+        background: var(--soft);
+      }
+      .opt.ok {
+        background: var(--mango);
+        color: #071b2b;
+        font-weight: 700;
+      }
+      .opt.no {
+        background: var(--chilli);
+        color: #fff;
+        font-weight: 700;
+      }
+      .tl {
+        border-left: 3px dashed var(--ink);
+        margin-left: 12px;
+        padding-left: 22px;
+        display: grid;
+        gap: 16px;
+      }
+      .tl div {
+        position: relative;
+      }
+      .tl div:before {
+        content: "";
+        position: absolute;
+        left: -31px;
+        top: 5px;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--chilli);
+        border: 1.5px solid var(--ink);
+      }
+      .banner {
+        background: var(--ink);
+        color: var(--bg);
+        text-align: center;
+        padding: 6px;
+        font-weight: 700;
+        display: none;
+        font-size: 13px;
+      }
+      #toast {
+        position: fixed;
+        left: 50%;
+        bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+        transform: translate(-50%, 120px);
+        background: var(--ink);
+        color: var(--bg);
+        padding: 9px 18px;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 14px;
+        transition: transform 0.3s;
+        z-index: 99;
+        border: 1px solid var(--mango);
+      }
+      #toast.s {
+        transform: translate(-50%, 0);
+      }
+      .live {
+        display: inline-block;
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: var(--mint);
+        box-shadow: 0 0 0 0 var(--mint);
+        animation: p 1.6s infinite;
+      }
+      @keyframes p {
+        70% {
+          box-shadow: 0 0 0 8px transparent;
+        }
+      }
+      #land,
+      #app,
+      #web {
+        position: relative;
+        z-index: 1;
+      }
+      #pt {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        pointer-events: none;
+      }
+      .top {
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px clamp(14px, 3vw, 36px);
+        background: var(--card);
+        border-bottom: 1.5px solid var(--ink);
+      }
+      .top h1 {
+        font-size: 18px;
+        font-weight: 800;
+        white-space: nowrap;
+      }
+      .top input {
+        max-width: 240px;
+        padding: 6px 12px;
+        font-size: 13px;
+      }
+      .top .sp1 {
+        flex: 1;
+      }
+      .top .pill {
+        border: 1.5px solid var(--ink);
+        border-radius: 10px;
+        padding: 4px 12px;
+        font-weight: 700;
+        background: var(--mango);
+        color: #071b2b;
+        cursor: pointer;
+        font-size: 13px;
+      }
+      .top .ib {
+        background: none;
+        border: 1.5px solid var(--ink);
+        border-radius: 10px;
+        width: 34px;
+        height: 34px;
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+      }
+      .top .ib svg {
+        width: 16px;
+        height: 16px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .top .who {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 700;
+        line-height: 1.1;
+        font-size: 13px;
+      }
+      .top .who small {
+        display: block;
+        font-weight: 400;
+        opacity: 0.7;
+      }
+      .wn {
+        max-width: 1100px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        padding: 16px 20px;
+      }
+      .wl {
+        display: flex;
+        gap: 22px;
+        margin: 0 auto;
+      }
+      .wl a {
+        color: inherit;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 14px;
+      }
+      .wl a:hover {
+        color: var(--chilli);
+      }
+      .ws {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 40px 20px;
+      }
+      .whero {
+        display: grid;
+        grid-template-columns: 1.15fr 1fr;
+        gap: 40px;
+        align-items: center;
+      }
+      .whero h1 {
+        font-size: clamp(36px, 5.5vw, 60px);
+        font-weight: 800;
+        letter-spacing: -1.5px;
+        margin: 12px 0;
+      }
+      .whero p {
+        font-size: 17px;
+        max-width: 48ch;
+        margin-bottom: 20px;
+      }
+      .wh2 {
+        font-size: clamp(26px, 4vw, 36px);
+        font-weight: 800;
+        margin-bottom: 8px;
+      }
+      .step {
+        display: flex;
+        gap: 14px;
+      }
+      .num {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        background: var(--chilli);
+        color: #fff;
+        display: grid;
+        place-items: center;
+        font-weight: 800;
+        flex: none;
+      }
+      .cta {
+        background: var(--chilli);
+        color: #fff;
+        border-radius: 18px;
+        padding: 38px 24px;
+        text-align: center;
+        border: 1.5px solid var(--ink);
+      }
+      .fi {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: var(--mango);
+        color: #071b2b;
+        display: grid;
+        place-items: center;
+        margin-bottom: 10px;
+      }
+      .fi svg {
+        width: 20px;
+        height: 20px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      @media (max-width: 760px) {
+        .hero,
+        .whero {
+          grid-template-columns: 1fr;
+        }
+        #app {
+          grid-template-columns: 1fr;
+        }
+        nav {
+          position: static;
+          height: auto;
+          flex-direction: row;
+          overflow-x: auto;
+          border-right: 0;
+          border-bottom: 1.5px solid var(--ink);
+          padding: 8px;
+        }
+        nav .logo {
+          display: none;
+        }
+        nav button {
+          white-space: nowrap;
+        }
+        .chat {
+          grid-template-columns: 1fr;
+        }
+        .wl {
+          display: none;
+        }
+        .top input,
+        .top .who span {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="pt" aria-hidden="true"></canvas>
 
-<!-- Marketing Web Section -->
-<section id="web">
-  <header class="wn">
-    <div class="logo">
-      <svg width="28" height="28" viewBox="0 0 100 100" aria-hidden="true"><rect x="4" y="4" width="92" height="92" rx="24" fill="#071B2B"/><path d="M20 72Q50 18 80 72" fill="none" stroke="#B9E4E8" stroke-width="8" stroke-linecap="round"/><path d="M14 72H86" stroke="#167D8D" stroke-width="8" stroke-linecap="round"/><circle cx="50" cy="52" r="6" fill="#EEEEEE"/></svg>
-      <span>Edu<b>Bridge</b> AI</span>
-    </div>
-    <div class="wl">
-      <a href="#why">Why EduBridge</a>
-      <a href="#features">Features</a>
-      <a href="#how">How it works</a>
-    </div>
-    <div class="row">
-      <button class="btn ghost sm" onclick="showLogin('Student')">Log in</button>
-      <button class="btn red sm" onclick="showLogin('Student')">Get started</button>
-    </div>
-  </header>
-
-  <div class="ws" style="padding-top:16px">
-    <div class="whero">
-      <div>
-        <span class="chip on">Learn together. Connect better. Grow forever.</span>
-        <h1>Learning shouldn’t stop at the classroom.</h1>
-        <p>EduBridge AI brings your notes, mentors, doubts, study groups and recovery roadmaps into one place, so every learning journey stays organized and continuous.</p>
+    <!-- Marketing Web Section -->
+    <section id="web">
+      <header class="wn">
+        <div class="logo">
+          <svg width="28" height="28" viewBox="0 0 100 100" aria-hidden="true">
+            <rect x="4" y="4" width="92" height="92" rx="24" fill="#071B2B" />
+            <path
+              d="M20 72Q50 18 80 72"
+              fill="none"
+              stroke="#B9E4E8"
+              stroke-width="8"
+              stroke-linecap="round"
+            />
+            <path
+              d="M14 72H86"
+              stroke="#167D8D"
+              stroke-width="8"
+              stroke-linecap="round"
+            />
+            <circle cx="50" cy="52" r="6" fill="#EEEEEE" />
+          </svg>
+          <span>Edu<b>Bridge</b> AI</span>
+        </div>
+        <div class="wl">
+          <a href="#why">Why EduBridge</a>
+          <a href="#features">Features</a>
+          <a href="#how">How it works</a>
+        </div>
         <div class="row">
-          <button class="btn red" onclick="showLogin('Student')">Join as student →</button>
-          <button class="btn ghost" onclick="showLogin('Mentor')">Join as mentor</button>
+          <button class="btn ghost sm" onclick="showLogin('Student')">
+            Log in
+          </button>
+          <button class="btn red sm" onclick="showLogin('Student')">
+            Get started
+          </button>
+        </div>
+      </header>
+
+      <div class="ws" style="padding-top: 16px">
+        <div class="whero">
+          <div>
+            <span class="chip on"
+              >Learn together. Connect better. Grow forever.</span
+            >
+            <h1>Learning shouldn’t stop at the classroom.</h1>
+            <p>
+              EduBridge AI brings your notes, mentors, doubts, study groups and
+              recovery roadmaps into one place, so every learning journey stays
+              organized and continuous.
+            </p>
+            <div class="row">
+              <button class="btn red" onclick="showLogin('Student')">
+                Join as student →
+              </button>
+              <button class="btn ghost" onclick="showLogin('Mentor')">
+                Join as mentor
+              </button>
+            </div>
+          </div>
+
+          <div class="card" aria-hidden="true">
+            <div class="row sp">
+              <b>Today’s learning</b
+              ><span class="chip on">🔥 6-day streak</span>
+            </div>
+            <div style="display: grid; gap: 12px; margin: 16px 0">
+              <div>
+                <div class="row sp">
+                  <span>Physics (Mechanics)</span><span>72%</span>
+                </div>
+                <div class="bar"><i style="width: 72%"></i></div>
+              </div>
+              <div>
+                <div class="row sp">
+                  <span>Maths (Calculus)</span><span>55%</span>
+                </div>
+                <div class="bar"><i style="width: 55%"></i></div>
+              </div>
+              <div>
+                <div class="row sp">
+                  <span>Computer Science (DSA)</span><span>84%</span>
+                </div>
+                <div class="bar"><i style="width: 84%"></i></div>
+              </div>
+            </div>
+            <div class="m" style="max-width: 100%; margin-bottom: 8px">
+              <b>Meera Ma’am:</b> Share your doubt on friction and I’ll check
+              tonight!
+            </div>
+            <div class="m me" style="max-width: 100%">
+              <b>Aarav:</b> Reviewing static vs kinetic friction now!
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="card" aria-hidden="true">
-        <div class="row sp"><b>Today’s learning</b><span class="chip on">🔥 6-day streak</span></div>
-        <div style="display:grid;gap:12px;margin:16px 0">
-          <div><div class="row sp"><span>Physics (Mechanics)</span><span>72%</span></div><div class="bar"><i style="width:72%"></i></div></div>
-          <div><div class="row sp"><span>Maths (Calculus)</span><span>55%</span></div><div class="bar"><i style="width:55%"></i></div></div>
-          <div><div class="row sp"><span>Computer Science (DSA)</span><span>84%</span></div><div class="bar"><i style="width:84%"></i></div></div>
+      <div class="ws" id="why">
+        <h2 class="wh2">Studying is scattered. We fix that.</h2>
+        <p class="muted" style="margin-bottom: 20px">
+          Students juggle 5+ different disconnected apps for notes, coaching,
+          and doubts.
+        </p>
+        <div class="grid">
+          <div class="card">
+            <h3>📁 Notes disappear</h3>
+            <p class="muted" style="margin-top: 6px">
+              Keep every note indexed in a personal cloud library you can open
+              even years later.
+            </p>
+          </div>
+          <div class="card">
+            <h3>🎙️ Mentors are hard to reach</h3>
+            <p class="muted" style="margin-top: 6px">
+              1-on-1 chat, drop-in voice rooms, and peer Q&A put guidance one
+              tap away.
+            </p>
+          </div>
+          <div class="card">
+            <h3>🔄 Breaks hurt momentum</h3>
+            <p class="muted" style="margin-top: 6px">
+              Study Gap Recovery rebuilds your comeback plan directly from your
+              own saved notes.
+            </p>
+          </div>
         </div>
-        <div class="m" style="max-width:100%;margin-bottom:8px"><b>Meera Ma’am:</b> Share your doubt on friction and I’ll check tonight!</div>
-        <div class="m me" style="max-width:100%"><b>Aarav:</b> Reviewing static vs kinetic friction now!</div>
+      </div>
+
+      <div class="ws" id="features">
+        <h2 class="wh2">Everything in one platform</h2>
+        <p class="muted" style="margin-bottom: 20px">
+          Thirteen integrated tools, built for real students and mentors.
+        </p>
+        <div class="grid" id="fg"></div>
+      </div>
+
+      <div class="ws" id="how">
+        <h2 class="wh2">How it works</h2>
+        <div class="grid" style="margin-top: 20px">
+          <div class="step">
+            <span class="num">1</span>
+            <div>
+              <h3>Sign up</h3>
+              <p class="muted">Pick your student or mentor dashboard.</p>
+            </div>
+          </div>
+          <div class="step">
+            <span class="num">2</span>
+            <div>
+              <h3>Add your notes</h3>
+              <p class="muted">
+                Upload, categorize and download them for offline use.
+              </p>
+            </div>
+          </div>
+          <div class="step">
+            <span class="num">3</span>
+            <div>
+              <h3>Learn and connect</h3>
+              <p class="muted">
+                Ask doubts, study in voice rooms, attempt quizzes, and earn
+                credits.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ws">
+        <div class="cta">
+          <h2 class="wh2" style="color: #fff">
+            One platform. Every note. Every connection.
+          </h2>
+          <p style="margin-bottom: 18px; opacity: 0.9">
+            Start your learning journey with EduBridge AI today.
+          </p>
+          <button
+            class="btn ghost"
+            onclick="showLogin('Student')"
+            style="font-weight: 800"
+          >
+            Get started for free →
+          </button>
+        </div>
+        <p class="muted" style="text-align: center; margin-top: 28px">
+          EduBridge AI • Learn continuously. Recover confidently. Grow with AI.
+        </p>
+      </div>
+    </section>
+
+    <!-- Login / Portal Screen -->
+    <section id="land" style="display: none">
+      <div class="row sp">
+        <div class="logo">
+          <svg width="28" height="28" viewBox="0 0 100 100" aria-hidden="true">
+            <rect x="4" y="4" width="92" height="92" rx="24" fill="#071B2B" />
+            <path
+              d="M20 72Q50 18 80 72"
+              fill="none"
+              stroke="#B9E4E8"
+              stroke-width="8"
+              stroke-linecap="round"
+            />
+            <path
+              d="M14 72H86"
+              stroke="#167D8D"
+              stroke-width="8"
+              stroke-linecap="round"
+            />
+            <circle cx="50" cy="52" r="6" fill="#EEEEEE" />
+          </svg>
+          <span>Edu<b>Bridge</b> AI</span>
+        </div>
+        <button class="btn ghost sm" onclick="showWeb()">← Back to home</button>
+      </div>
+
+      <div class="hero">
+        <div>
+          <h1>
+            One platform. <span class="hl">Every note.</span> Every connection.
+          </h1>
+          <p>
+            Keep your notes forever, talk to verified mentors, study in drop-in
+            voice rooms, and pick up right where you left off after any study
+            break.
+          </p>
+          <div class="row">
+            <span class="chip">Notes that stay</span
+            ><span class="chip">Mentor chat</span
+            ><span class="chip">Voice rooms</span
+            ><span class="chip">Offline ready</span>
+          </div>
+        </div>
+
+        <div class="card sticker">
+          <div class="tabs">
+            <button class="btn" id="tS" onclick="setRole('Student')">
+              🎓 Student
+            </button>
+            <button class="btn ghost" id="tM" onclick="setRole('Mentor')">
+              👩‍🏫 Mentor / Teacher
+            </button>
+          </div>
+          <h3 id="lt" style="font-size: 22px; margin-bottom: 8px">
+            Student Login
+          </h3>
+          <p class="muted" style="margin-bottom: 14px">
+            Access personalized learning cockpits, notes and AI assistance.
+          </p>
+          <div style="display: grid; gap: 10px">
+            <input
+              id="nm"
+              placeholder="Your name"
+              value="Aarav"
+              aria-label="Your name"
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value="demo1234"
+              aria-label="Password"
+            />
+          </div>
+          <button
+            class="btn red"
+            style="width: 100%; margin-top: 14px; font-size: 15px"
+            onclick="enter()"
+          >
+            Log in →
+          </button>
+          <div class="row" style="margin-top: 14px; justify-content: center">
+            <span class="muted" style="font-size: 12px">Demo presets:</span>
+            <button
+              class="btn ghost sm"
+              style="font-size: 11px; padding: 2px 8px"
+              onclick="$('#nm').value='Aarav';setRole('Student');enter()"
+            >
+              Aarav (Student)
+            </button>
+            <button
+              class="btn ghost sm"
+              style="font-size: 11px; padding: 2px 8px"
+              onclick="$('#nm').value='Meera Ma’am';setRole('Mentor');enter()"
+            >
+              Meera (Mentor)
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="feat" id="feat"></div>
+    </section>
+
+    <!-- Dashboard Shell -->
+    <div id="app">
+      <nav id="nav"></nav>
+      <div>
+        <header class="top" id="top"></header>
+        <div class="banner" id="ban">
+          ⚡ Offline mode active: Displaying locally cached items only.
+        </div>
+        <main id="main"></main>
       </div>
     </div>
-  </div>
 
-  <div class="ws" id="why">
-    <h2 class="wh2">Studying is scattered. We fix that.</h2>
-    <p class="muted" style="margin-bottom:20px">Students juggle 5+ different disconnected apps for notes, coaching, and doubts.</p>
-    <div class="grid">
-      <div class="card"><h3>📁 Notes disappear</h3><p class="muted" style="margin-top:6px">Keep every note indexed in a personal cloud library you can open even years later.</p></div>
-      <div class="card"><h3>🎙️ Mentors are hard to reach</h3><p class="muted" style="margin-top:6px">1-on-1 chat, drop-in voice rooms, and peer Q&A put guidance one tap away.</p></div>
-      <div class="card"><h3>🔄 Breaks hurt momentum</h3><p class="muted" style="margin-top:6px">Study Gap Recovery rebuilds your comeback plan directly from your own saved notes.</p></div>
-    </div>
-  </div>
+    <div id="toast"></div>
 
-  <div class="ws" id="features">
-    <h2 class="wh2">Everything in one platform</h2>
-    <p class="muted" style="margin-bottom:20px">Thirteen integrated tools, built for real students and mentors.</p>
-    <div class="grid" id="fg"></div>
-  </div>
+    <script>
+      const $ = (s) => document.querySelector(s);
+      const COL = ["#B9E4E8", "#9ED5DC", "#D3EEF1", "#B9E4E8", "#9ED5DC"];
+      const S = {
+        role: "Student",
+        name: "Aarav",
+        view: "home",
+        credits: 240,
+        streak: 6,
+        offline: false,
+        subj: "All",
+        q: "",
+        notes: [
+          {
+            t: "Newton’s Laws & Friction Summary",
+            s: "Physics",
+            d: "Mar 2024",
+            o: true,
+          },
+          {
+            t: "Integration Cheat Sheet & Formulae",
+            s: "Maths",
+            d: "Jan 2024",
+            o: true,
+          },
+          {
+            t: "Organic Reactions Mechanisms Map",
+            s: "Chemistry",
+            d: "Nov 2023",
+            o: false,
+          },
+          {
+            t: "Cell Division & Mitosis Diagrams",
+            s: "Biology",
+            d: "Aug 2023",
+            o: false,
+          },
+          {
+            t: "Python Loops & Data Structures",
+            s: "CS",
+            d: "Jun 2023",
+            o: true,
+          },
+          {
+            t: "Thermodynamics & Heat Engines",
+            s: "Physics",
+            d: "May 2023",
+            o: false,
+          },
+        ],
+        mentors: [
+          {
+            n: "Meera Ma’am",
+            s: "Physics",
+            msgs: [
+              [
+                "t",
+                "Hi Aarav! Share your doubt on friction and I’ll look at it tonight.",
+              ],
+              ["me", "Thank you Ma’am! Working on static friction formulas."],
+              ["t", "Remember: F_max = μ_s * N. It limits applied friction."],
+            ],
+          },
+          {
+            n: "Rohan Sir",
+            s: "Maths",
+            msgs: [
+              [
+                "t",
+                "Try the substitution method u = x² + 1 first before partial fractions.",
+              ],
+              [
+                "me",
+                "Understood Sir, that simplified the integral immediately!",
+              ],
+            ],
+          },
+          {
+            n: "Divya Di",
+            s: "CS",
+            msgs: [
+              [
+                "t",
+                "Ready for the code review? Send your recursion implementation over!",
+              ],
+            ],
+          },
+        ],
+        mi: 0,
+        rooms: [
+          {
+            n: "Physics Doubt Den",
+            who: ["M", "K", "S", "R"],
+            live: true,
+            topic: "FBD & Inclined Planes",
+          },
+          {
+            n: "Maths Silent Grind",
+            who: ["A", "D"],
+            live: true,
+            topic: "Calculus Problem Set",
+          },
+          {
+            n: "CS Late-Night Debug",
+            who: ["V", "P", "N"],
+            live: true,
+            topic: "Tree Traversals & LeetCode",
+          },
+          {
+            n: "Chemistry Chai Chat",
+            who: [],
+            live: false,
+            topic: "Periodic Trends",
+          },
+        ],
+        inRoom: -1,
+        muted: false,
+        groups: [
+          { n: "Class 12 Boards Squad", m: 48, j: true, cat: "Board Exams" },
+          { n: "JEE / NEET Warriors", m: 120, j: false, cat: "Competitive" },
+          { n: "Coding & Algorithmic Thinkers", m: 36, j: false, cat: "Tech" },
+          { n: "STEM Research & Innovations", m: 54, j: true, cat: "Research" },
+        ],
+        qa: [
+          {
+            q: "Why does a multi-pulley system require less applied force?",
+            by: "Kavya",
+            a: "It spreads the total load across multiple rope loops, effectively giving a mechanical advantage equal to the supporting strand count. (Meera Ma’am)",
+            v: 14,
+          },
+          {
+            q: "What is the intuitive difference between Mean and Median with outliers?",
+            by: "Sana",
+            a: "Mean is the arithmetic balance point pulled heavily by extreme outliers. Median is the positional middle that stays robust. (Rohan Sir)",
+            v: 8,
+          },
+          {
+            q: "Why is binary search O(log N) instead of O(N)?",
+            by: "Rahul",
+            a: "",
+            v: 5,
+          },
+        ],
+        ai: [
+          [
+            "t",
+            "Namaste! I am your EduBridge Academic Assistant. I can ground answers in your saved notes, quiz you on topics, or build your study timetable.",
+          ],
+        ],
+        qz: { i: 0, sc: 0, done: false, pick: -1 },
+        cr: "Tech",
+        gap: 3,
+        teacherDoubts: [
+          {
+            id: 1,
+            st: "Aarav",
+            q: "Why does static friction self-adjust?",
+            r: "",
+          },
+          {
+            id: 2,
+            st: "Sana",
+            q: "How do we evaluate the integral of x*e^(x²)?",
+            r: "",
+          },
+        ],
+      };
 
-  <div class="ws" id="how">
-    <h2 class="wh2">How it works</h2>
-    <div class="grid" style="margin-top:20px">
-      <div class="step"><span class="num">1</span><div><h3>Sign up</h3><p class="muted">Pick your student or mentor dashboard.</p></div></div>
-      <div class="step"><span class="num">2</span><div><h3>Add your notes</h3><p class="muted">Upload, categorize and download them for offline use.</p></div></div>
-      <div class="step"><span class="num">3</span><div><h3>Learn and connect</h3><p class="muted">Ask doubts, study in voice rooms, attempt quizzes, and earn credits.</p></div></div>
-    </div>
-  </div>
+      const QZ = [
+        {
+          q: "Which law states mathematically that F = m * a?",
+          o: [
+            "Newton’s 1st Law",
+            "Newton’s 2nd Law",
+            "Newton’s 3rd Law",
+            "Universal Gravitation",
+          ],
+          a: 1,
+          exp: "Newton’s 2nd Law defines force as the rate of change of momentum (dp/dt = m*a for constant mass).",
+        },
+        {
+          q: "What is the derivative of f(x) = x² with respect to x?",
+          o: ["x", "2x", "x²/2", "2x²"],
+          a: 1,
+          exp: "Power rule: d/dx(x^n) = n*x^(n-1). For x², 2*x^(2-1) = 2x.",
+        },
+        {
+          q: "Which keyword initiates a loop over an iterable in Python?",
+          o: ["loop", "repeat", "for", "iterate"],
+          a: 2,
+          exp: 'Python uses the "for" keyword to iterate over sequence types.',
+        },
+        {
+          q: "Which organelle is considered the powerhouse of eukaryotic cells?",
+          o: ["Ribosome", "Mitochondria", "Golgi body", "Lysosome"],
+          a: 1,
+          exp: "Mitochondria generate cellular energy in the form of ATP.",
+        },
+      ];
 
-  <div class="ws">
-    <div class="cta">
-      <h2 class="wh2" style="color:#fff">One platform. Every note. Every connection.</h2>
-      <p style="margin-bottom:18px;opacity:.9">Start your learning journey with EduBridge AI today.</p>
-      <button class="btn ghost" onclick="showLogin('Student')" style="font-weight:800">Get started for free →</button>
-    </div>
-    <p class="muted" style="text-align:center;margin-top:28px">EduBridge AI • Learn continuously. Recover confidently. Grow with AI.</p>
-  </div>
-</section>
+      const CAR = {
+        Tech: [
+          "Learn Python & Core DSA (Arrays, Lists, Trees)",
+          "Build 3 full-stack projects in React & Node",
+          "Contribute to open-source software via Git",
+          "Land a software engineering internship",
+          "Specialise: Applied AI, Cloud Systems, or DevOps",
+        ],
+        Medicine: [
+          "Master NCERT Biology, Physics & Organic Chemistry",
+          "Target top percentile in NEET / MCAT with mocks",
+          "Complete pre-clinical coursework and clinical rotations",
+          "Match into residency and gain clinical mentorship",
+          "Specialized board certification and patient care",
+        ],
+        Design: [
+          "Master visual hierarchy, typography & colour palettes",
+          "Design 5 end-to-end case studies in Figma",
+          "Conduct usability tests & interactive prototyping",
+          "Work with product startups or design agencies",
+          "Build design systems and lead UX direction",
+        ],
+        Business: [
+          "Strengthen microeconomics, finance & statistics",
+          "Launch a student venture or manage a community project",
+          "Prepare for entrance benchmarks (CUET / CAT / GMAT)",
+          "Intern at high-growth startups in product or ops",
+          "Executive leadership or venture creation",
+        ],
+      };
 
-<!-- Login / Portal Screen -->
-<section id="land" style="display:none">
-  <div class="row sp">
-    <div class="logo">
-      <svg width="28" height="28" viewBox="0 0 100 100" aria-hidden="true"><rect x="4" y="4" width="92" height="92" rx="24" fill="#071B2B"/><path d="M20 72Q50 18 80 72" fill="none" stroke="#B9E4E8" stroke-width="8" stroke-linecap="round"/><path d="M14 72H86" stroke="#167D8D" stroke-width="8" stroke-linecap="round"/><circle cx="50" cy="52" r="6" fill="#EEEEEE"/></svg>
-      <span>Edu<b>Bridge</b> AI</span>
-    </div>
-    <button class="btn ghost sm" onclick="showWeb()">← Back to home</button>
-  </div>
+      const IC = {
+        home: "M3 11l9-8 9 8v10H3z",
+        notes: "M5 3h11l3 3v15H5zM9 10h6M9 14h6",
+        chat: "M4 5h16v11H9l-5 4z",
+        voice:
+          "M12 3a3 3 0 0 1 3 3v5a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3zM5 11a7 7 0 0 0 14 0M12 18v3",
+        groups:
+          "M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM3 20c0-3.5 2.7-6 6-6s6 2.5 6 6M17 8a2.5 2.5 0 1 1 0 5M18 14c2 .5 3 2.5 3 5",
+        qa: "M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17v.01",
+        ai: "M12 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2z",
+        gap: "M3 18h18M5 18v-5a7 7 0 0 1 14 0v5",
+        career: "M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM15 9l-2 5-5 1 2-5z",
+        quiz: "M6 5h12v16H6zM9 3h6v4H9zM9 14l2 2 4-4",
+        offline: "M12 4v12m0 0l-4-4m4 4l4-4M5 20h14",
+        rewards:
+          "M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3",
+        teacher:
+          "M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z",
+        sun: "M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10zM12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5",
+        out: "M10 4H5v16h5M15 8l4 4-4 4M19 12H9",
+      };
+      const ic = (k) =>
+        `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${
+          IC[k] || IC["home"]
+        }"/></svg>`;
 
-  <div class="hero">
-    <div>
-      <h1>One platform. <span class="hl">Every note.</span> Every connection.</h1>
-      <p>Keep your notes forever, talk to verified mentors, study in drop-in voice rooms, and pick up right where you left off after any study break.</p>
-      <div class="row"><span class="chip">Notes that stay</span><span class="chip">Mentor chat</span><span class="chip">Voice rooms</span><span class="chip">Offline ready</span></div>
-    </div>
+      const NAV = [
+        ["home", "Home"],
+        ["notes", "Notes library"],
+        ["chat", "Mentor chat"],
+        ["voice", "Voice rooms"],
+        ["groups", "Group study"],
+        ["qa", "Q&A"],
+        ["ai", "AI assistant"],
+        ["gap", "Study gap recovery"],
+        ["career", "Career roadmaps"],
+        ["quiz", "Assessments"],
+        ["offline", "Offline"],
+        ["rewards", "Rewards"],
+      ];
 
-    <div class="card sticker">
-      <div class="tabs">
-        <button class="btn" id="tS" onclick="setRole('Student')">🎓 Student</button>
-        <button class="btn ghost" id="tM" onclick="setRole('Mentor')">👩‍🏫 Mentor / Teacher</button>
-      </div>
-      <h3 id="lt" style="font-size:22px;margin-bottom:8px">Student Login</h3>
-      <p class="muted" style="margin-bottom:14px">Access personalized learning cockpits, notes and AI assistance.</p>
-      <div style="display:grid;gap:10px">
-        <input id="nm" placeholder="Your name" value="Aarav" aria-label="Your name">
-        <input type="password" placeholder="Password" value="demo1234" aria-label="Password">
-      </div>
-      <button class="btn red" style="width:100%;margin-top:14px;font-size:15px" onclick="enter()">Log in →</button>
-      <div class="row" style="margin-top:14px;justify-content:center">
-        <span class="muted" style="font-size:12px">Demo presets:</span>
-        <button class="btn ghost sm" style="font-size:11px;padding:2px 8px" onclick="$('#nm').value='Aarav';setRole('Student');enter()">Aarav (Student)</button>
-        <button class="btn ghost sm" style="font-size:11px;padding:2px 8px" onclick="$('#nm').value='Meera Ma’am';setRole('Mentor');enter()">Meera (Mentor)</button>
-      </div>
-    </div>
-  </div>
+      const FEATS = [
+        "Notes library",
+        "Mentor chat",
+        "Voice rooms",
+        "Group study",
+        "Q&A",
+        "AI assistant",
+        "Gap recovery",
+        "Career roadmaps",
+        "Quizzes",
+        "Offline mode",
+        "Credit rewards",
+        "Teacher Portal",
+        "Streak Tracker",
+      ];
+      $("#feat").innerHTML = FEATS.map((f) => `<div>${f}</div>`).join("");
 
-  <div class="feat" id="feat"></div>
-</section>
+      const FE = [
+        [
+          "groups",
+          "Dual login",
+          "Distinct student & mentor accounts with role-custom dashboards.",
+        ],
+        [
+          "notes",
+          "Smart notes library",
+          "Upload, tag by subject, search, and preserve notes forever.",
+        ],
+        [
+          "chat",
+          "Student–mentor chat",
+          "1-on-1 direct messaging, study questions and file attachments.",
+        ],
+        [
+          "voice",
+          "Voice study channels",
+          "Drop-in audio spaces for group study and live doubt resolution.",
+        ],
+        [
+          "groups",
+          "Study squads",
+          "Collaborate with peers, share notes and prepare together.",
+        ],
+        [
+          "qa",
+          "Community Q&A",
+          "Ask tough doubts; verified mentors and top students answer.",
+        ],
+        [
+          "ai",
+          "AI academic assistant",
+          "Instant grounded explanations, quiz generation and weekly plans.",
+        ],
+        [
+          "gap",
+          "Study gap recovery",
+          "Personalized comeback roadmap formulated from your old notes.",
+        ],
+        [
+          "career",
+          "Career roadmaps",
+          "Milestone paths in Tech, Medicine, Design and Business.",
+        ],
+        [
+          "quiz",
+          "Diagnostic assessments",
+          "Timed quizzes with instant feedback, explanations and credits.",
+        ],
+        [
+          "offline",
+          "Offline learning",
+          "Study notes, formula sheets and lessons without internet.",
+        ],
+        [
+          "rewards",
+          "Credit rewards",
+          "Earn points for learning and redeem for mentor sessions.",
+        ],
+        [
+          "home",
+          "Mastery dashboard",
+          "Track subject completion, study streaks and daily to-dos.",
+        ],
+      ];
+      $("#fg").innerHTML = FE.map(
+        (f) =>
+          `<div class="card"><div class="fi">${ic(
+            f[0]
+          )}</div><h3 style="font-size:17px;margin-bottom:4px">${
+            f[1]
+          }</h3><p class="muted">${f[2]}</p></div>`
+      ).join("");
 
-<!-- Dashboard Shell -->
-<div id="app">
-  <nav id="nav"></nav>
-  <div>
-    <header class="top" id="top"></header>
-    <div class="banner" id="ban">⚡ Offline mode active: Displaying locally cached items only.</div>
-    <main id="main"></main>
-  </div>
-</div>
+      function showLogin(r) {
+        $("#web").style.display = "none";
+        $("#land").style.display = "block";
+        setRole(r || "Student");
+        scrollTo(0, 0);
+      }
+      function showWeb() {
+        $("#land").style.display = "none";
+        $("#web").style.display = "block";
+        scrollTo(0, 0);
+      }
+      function toast(t) {
+        const e = $("#toast");
+        e.textContent = t;
+        e.classList.add("s");
+        clearTimeout(toast.h);
+        toast.h = setTimeout(() => e.classList.remove("s"), 2200);
+      }
+      function setRole(r) {
+        S.role = r;
+        $("#lt").textContent = r + " Login";
+        $("#tS").className = "btn" + (r == "Student" ? "" : " ghost");
+        $("#tM").className = "btn" + (r == "Mentor" ? "" : " ghost");
+        if (
+          !$("#nm").value ||
+          $("#nm").value == "Aarav" ||
+          $("#nm").value == "Meera Ma’am"
+        ) {
+          $("#nm").value = r == "Student" ? "Aarav" : "Meera Ma’am";
+        }
+      }
+      function enter() {
+        S.name =
+          $("#nm").value.trim() ||
+          (S.role == "Student" ? "Aarav" : "Meera Ma’am");
+        if (S.role == "Mentor") {
+          S.credits = 500;
+          S.streak = 42;
+        }
+        $("#land").style.display = "none";
+        $("#app").style.display = "grid";
+        go("home");
+      }
+      function go(v) {
+        S.view = v;
+        $("#nav").innerHTML =
+          `<div class="logo"><svg width="28" height="28" viewBox="0 0 100 100" aria-hidden="true"><rect x="4" y="4" width="92" height="92" rx="24" fill="#071B2B"/><path d="M20 72Q50 18 80 72" fill="none" stroke="#B9E4E8" stroke-width="8" stroke-linecap="round"/><path d="M14 72H86" stroke="#167D8D" stroke-width="8" stroke-linecap="round"/><circle cx="50" cy="52" r="6" fill="#EEEEEE"/></svg><span>Edu<b>Bridge</b></span></div>` +
+          NAV.map(
+            (n) =>
+              `<button class="${n[0] == v ? "on" : ""}" onclick="go('${
+                n[0]
+              }')">${ic(n[0])}<span>${n[1]}</span></button>`
+          ).join("") +
+          `<button onclick="location.reload()" style="margin-top:auto">${ic(
+            "out"
+          )}<span>Exit demo</span></button>`;
 
-<div id="toast"></div>
-
-<script>
-const $=s=>document.querySelector(s);
-const COL=['#B9E4E8','#9ED5DC','#D3EEF1','#B9E4E8','#9ED5DC'];
-const S={
-  role:'Student',name:'Aarav',view:'home',credits:240,streak:6,offline:false,
-  subj:'All',q:'',
-  notes:[
-    {t:'Newton’s Laws & Friction Summary',s:'Physics',d:'Mar 2024',o:true},
-    {t:'Integration Cheat Sheet & Formulae',s:'Maths',d:'Jan 2024',o:true},
-    {t:'Organic Reactions Mechanisms Map',s:'Chemistry',d:'Nov 2023',o:false},
-    {t:'Cell Division & Mitosis Diagrams',s:'Biology',d:'Aug 2023',o:false},
-    {t:'Python Loops & Data Structures',s:'CS',d:'Jun 2023',o:true},
-    {t:'Thermodynamics & Heat Engines',s:'Physics',d:'May 2023',o:false}
-  ],
-  mentors:[
-    {n:'Meera Ma’am',s:'Physics',msgs:[['t','Hi Aarav! Share your doubt on friction and I’ll look at it tonight.'],['me','Thank you Ma’am! Working on static friction formulas.'],['t','Remember: F_max = μ_s * N. It limits applied friction.']]},
-    {n:'Rohan Sir',s:'Maths',msgs:[['t','Try the substitution method u = x² + 1 first before partial fractions.'],['me','Understood Sir, that simplified the integral immediately!']]},
-    {n:'Divya Di',s:'CS',msgs:[['t','Ready for the code review? Send your recursion implementation over!']]}
-  ],
-  mi:0,
-  rooms:[
-    {n:'Physics Doubt Den',who:['M','K','S','R'],live:true,topic:'FBD & Inclined Planes'},
-    {n:'Maths Silent Grind',who:['A','D'],live:true,topic:'Calculus Problem Set'},
-    {n:'CS Late-Night Debug',who:['V','P','N'],live:true,topic:'Tree Traversals & LeetCode'},
-    {n:'Chemistry Chai Chat',who:[],live:false,topic:'Periodic Trends'}
-  ],
-  inRoom:-1,muted:false,
-  groups:[
-    {n:'Class 12 Boards Squad',m:48,j:true,cat:'Board Exams'},
-    {n:'JEE / NEET Warriors',m:120,j:false,cat:'Competitive'},
-    {n:'Coding & Algorithmic Thinkers',m:36,j:false,cat:'Tech'},
-    {n:'STEM Research & Innovations',m:54,j:true,cat:'Research'}
-  ],
-  qa:[
-    {q:'Why does a multi-pulley system require less applied force?',by:'Kavya',a:'It spreads the total load across multiple rope loops, effectively giving a mechanical advantage equal to the supporting strand count. (Meera Ma’am)',v:14},
-    {q:'What is the intuitive difference between Mean and Median with outliers?',by:'Sana',a:'Mean is the arithmetic balance point pulled heavily by extreme outliers. Median is the positional middle that stays robust. (Rohan Sir)',v:8},
-    {q:'Why is binary search O(log N) instead of O(N)?',by:'Rahul',a:'',v:5}
-  ],
-  ai:[['t','Namaste! I am your EduBridge Academic Assistant. I can ground answers in your saved notes, quiz you on topics, or build your study timetable.']],
-  qz:{i:0,sc:0,done:false,pick:-1},cr:'Tech',
-  gap:3,
-  teacherDoubts:[
-    {id:1,st:'Aarav',q:'Why does static friction self-adjust?',r:''},
-    {id:2,st:'Sana',q:'How do we evaluate the integral of x*e^(x²)?',r:''}
-  ]
-};
-
-const QZ=[
-  {q:'Which law states mathematically that F = m * a?',o:['Newton’s 1st Law','Newton’s 2nd Law','Newton’s 3rd Law','Universal Gravitation'],a:1,exp:'Newton’s 2nd Law defines force as the rate of change of momentum (dp/dt = m*a for constant mass).'},
-  {q:'What is the derivative of f(x) = x² with respect to x?',o:['x','2x','x²/2','2x²'],a:1,exp:'Power rule: d/dx(x^n) = n*x^(n-1). For x², 2*x^(2-1) = 2x.'},
-  {q:'Which keyword initiates a loop over an iterable in Python?',o:['loop','repeat','for','iterate'],a:2,exp:'Python uses the "for" keyword to iterate over sequence types.'},
-  {q:'Which organelle is considered the powerhouse of eukaryotic cells?',o:['Ribosome','Mitochondria','Golgi body','Lysosome'],a:1,exp:'Mitochondria generate cellular energy in the form of ATP.'}
-];
-
-const CAR={
-  Tech:['Learn Python & Core DSA (Arrays, Lists, Trees)','Build 3 full-stack projects in React & Node','Contribute to open-source software via Git','Land a software engineering internship','Specialise: Applied AI, Cloud Systems, or DevOps'],
-  Medicine:['Master NCERT Biology, Physics & Organic Chemistry','Target top percentile in NEET / MCAT with mocks','Complete pre-clinical coursework and clinical rotations','Match into residency and gain clinical mentorship','Specialized board certification and patient care'],
-  Design:['Master visual hierarchy, typography & colour palettes','Design 5 end-to-end case studies in Figma','Conduct usability tests & interactive prototyping','Work with product startups or design agencies','Build design systems and lead UX direction'],
-  Business:['Strengthen microeconomics, finance & statistics','Launch a student venture or manage a community project','Prepare for entrance benchmarks (CUET / CAT / GMAT)','Intern at high-growth startups in product or ops','Executive leadership or venture creation']
-};
-
-const IC={
-  "home": "M3 11l9-8 9 8v10H3z",
-  "notes": "M5 3h11l3 3v15H5zM9 10h6M9 14h6",
-  "chat": "M4 5h16v11H9l-5 4z",
-  "voice": "M12 3a3 3 0 0 1 3 3v5a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3zM5 11a7 7 0 0 0 14 0M12 18v3",
-  "groups": "M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM3 20c0-3.5 2.7-6 6-6s6 2.5 6 6M17 8a2.5 2.5 0 1 1 0 5M18 14c2 .5 3 2.5 3 5",
-  "qa": "M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17v.01",
-  "ai": "M12 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2z",
-  "gap": "M3 18h18M5 18v-5a7 7 0 0 1 14 0v5",
-  "career": "M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM15 9l-2 5-5 1 2-5z",
-  "quiz": "M6 5h12v16H6zM9 3h6v4H9zM9 14l2 2 4-4",
-  "offline": "M12 4v12m0 0l-4-4m4 4l4-4M5 20h14",
-  "rewards": "M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3",
-  "teacher": "M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z",
-  "sun":"M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10zM12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5",
-  "out": "M10 4H5v16h5M15 8l4 4-4 4M19 12H9"
-};
-const ic=k=>`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${IC[k]||IC['home']}"/></svg>`;
-
-const NAV=[
-  ['home','Home'],
-  ['notes','Notes library'],
-  ['chat','Mentor chat'],
-  ['voice','Voice rooms'],
-  ['groups','Group study'],
-  ['qa','Q&A'],
-  ['ai','AI assistant'],
-  ['gap','Study gap recovery'],
-  ['career','Career roadmaps'],
-  ['quiz','Assessments'],
-  ['offline','Offline'],
-  ['rewards','Rewards']
-];
-
-const FEATS=['Notes library','Mentor chat','Voice rooms','Group study','Q&A','AI assistant','Gap recovery','Career roadmaps','Quizzes','Offline mode','Credit rewards','Teacher Portal','Streak Tracker'];
-$('#feat').innerHTML=FEATS.map(f=>`<div>${f}</div>`).join('');
-
-const FE=[
-  ['groups','Dual login','Distinct student & mentor accounts with role-custom dashboards.'],
-  ['notes','Smart notes library','Upload, tag by subject, search, and preserve notes forever.'],
-  ['chat','Student–mentor chat','1-on-1 direct messaging, study questions and file attachments.'],
-  ['voice','Voice study channels','Drop-in audio spaces for group study and live doubt resolution.'],
-  ['groups','Study squads','Collaborate with peers, share notes and prepare together.'],
-  ['qa','Community Q&A','Ask tough doubts; verified mentors and top students answer.'],
-  ['ai','AI academic assistant','Instant grounded explanations, quiz generation and weekly plans.'],
-  ['gap','Study gap recovery','Personalized comeback roadmap formulated from your old notes.'],
-  ['career','Career roadmaps','Milestone paths in Tech, Medicine, Design and Business.'],
-  ['quiz','Diagnostic assessments','Timed quizzes with instant feedback, explanations and credits.'],
-  ['offline','Offline learning','Study notes, formula sheets and lessons without internet.'],
-  ['rewards','Credit rewards','Earn points for learning and redeem for mentor sessions.'],
-  ['home','Mastery dashboard','Track subject completion, study streaks and daily to-dos.']
-];
-$('#fg').innerHTML=FE.map(f=>`<div class="card"><div class="fi">${ic(f[0])}</div><h3 style="font-size:17px;margin-bottom:4px">${f[1]}</h3><p class="muted">${f[2]}</p></div>`).join('');
-
-function showLogin(r){$('#web').style.display='none';$('#land').style.display='block';setRole(r||'Student');scrollTo(0,0)}
-function showWeb(){$('#land').style.display='none';$('#web').style.display='block';scrollTo(0,0)}
-function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('s');clearTimeout(toast.h);toast.h=setTimeout(()=>e.classList.remove('s'),2200)}
-function setRole(r){
-  S.role=r;
-  $('#lt').textContent=r+' Login';
-  $('#tS').className='btn'+(r=='Student'?'':' ghost');
-  $('#tM').className='btn'+(r=='Mentor'?'':' ghost');
-  if(!$('#nm').value||$('#nm').value=='Aarav'||$('#nm').value=='Meera Ma’am'){
-    $('#nm').value=r=='Student'?'Aarav':'Meera Ma’am';
-  }
-}
-function enter(){
-  S.name=$('#nm').value.trim()||(S.role=='Student'?'Aarav':'Meera Ma’am');
-  if(S.role=='Mentor'){S.credits=500;S.streak=42;}
-  $('#land').style.display='none';
-  $('#app').style.display='grid';
-  go('home');
-}
-function go(v){
-  S.view=v;
-  $('#nav').innerHTML=`<div class="logo"><svg width="28" height="28" viewBox="0 0 100 100" aria-hidden="true"><rect x="4" y="4" width="92" height="92" rx="24" fill="#071B2B"/><path d="M20 72Q50 18 80 72" fill="none" stroke="#B9E4E8" stroke-width="8" stroke-linecap="round"/><path d="M14 72H86" stroke="#167D8D" stroke-width="8" stroke-linecap="round"/><circle cx="50" cy="52" r="6" fill="#EEEEEE"/></svg><span>Edu<b>Bridge</b></span></div>`
-    +NAV.map(n=>`<button class="${n[0]==v?'on':''}" onclick="go('${n[0]}')">${ic(n[0])}<span>${n[1]}</span></button>`).join('')
-    +`<button onclick="location.reload()" style="margin-top:auto">${ic('out')}<span>Exit demo</span></button>`;
-
-  const curTitle=NAV.find(n=>n[0]==v)?.[1]||'Dashboard';
-  $('#top').innerHTML=`<h1 class="logo" style="font-family:inherit;font-size:18px">${curTitle}</h1>
+        const curTitle = NAV.find((n) => n[0] == v)?.[1] || "Dashboard";
+        $(
+          "#top"
+        ).innerHTML = `<h1 class="logo" style="font-family:inherit;font-size:18px">${curTitle}</h1>
     <input id="gs" placeholder="Search notes & topics..." aria-label="Search notes" onkeydown="if(event.key=='Enter'){S.q=this.value;S.subj='All';go('notes')}">
     <span class="sp1"></span>
-    <button class="pill" onclick="go('rewards')" title="Your credits">🏆 ${S.credits} credits</button>
-    <button class="ib" onclick="toggleTheme()" aria-label="Toggle theme">${ic('sun')}</button>
-    <div class="who"><span class="av" style="background:#B9E4E8">${S.name[0].toUpperCase()}</span><span>${S.name}<small>${S.role}</small></span></div>`;
+    <button class="pill" onclick="go('rewards')" title="Your credits">🏆 ${
+      S.credits
+    } credits</button>
+    <button class="ib" onclick="toggleTheme()" aria-label="Toggle theme">${ic(
+      "sun"
+    )}</button>
+    <div class="who"><span class="av" style="background:#B9E4E8">${S.name[0].toUpperCase()}</span><span>${
+          S.name
+        }<small>${S.role}</small></span></div>`;
 
-  $('#main').innerHTML=V[v]();
-  scrollTo(0,0);
-  const m=$('.msgs');if(m)m.scrollTop=m.scrollHeight;
-}
+        $("#main").innerHTML = V[v]();
+        scrollTo(0, 0);
+        const m = $(".msgs");
+        if (m) m.scrollTop = m.scrollHeight;
+      }
 
-const head=(t,s)=>`<h2>${t}</h2><p class="muted">${s}</p>`;
-const av=(n,i)=>`<span class="av" style="background:${COL[i%5]}">${n[0]}</span>`;
-const bar=p=>`<div class="bar"><i style="width:${p}%"></i></div>`;
-const vis=()=>S.notes.filter(n=>(S.subj=='All'||n.s==S.subj)&&n.t.toLowerCase().includes(S.q.toLowerCase())&&(!S.offline||n.o));
+      const head = (t, s) => `<h2>${t}</h2><p class="muted">${s}</p>`;
+      const av = (n, i) =>
+        `<span class="av" style="background:${COL[i % 5]}">${n[0]}</span>`;
+      const bar = (p) => `<div class="bar"><i style="width:${p}%"></i></div>`;
+      const vis = () =>
+        S.notes.filter(
+          (n) =>
+            (S.subj == "All" || n.s == S.subj) &&
+            n.t.toLowerCase().includes(S.q.toLowerCase()) &&
+            (!S.offline || n.o)
+        );
 
-const V={
-home(){
-  if(S.role=='Mentor'){
-    return head(`Welcome, ${S.name} 👩‍🏫`,'Mentor Control Portal: review doubts, upload syllabus notes, and manage students.')+`
+      const V = {
+        home() {
+          if (S.role == "Mentor") {
+            return (
+              head(
+                `Welcome, ${S.name} 👩‍🏫`,
+                "Mentor Control Portal: review doubts, upload syllabus notes, and manage students."
+              ) +
+              `
     <div class="grid" style="margin-bottom:18px">
       <div class="card" style="background:var(--mango);color:#071B2B"><div class="muted">Students Mentored</div><h2 style="font-size:44px">24</h2><span style="font-size:12px;font-weight:700">Across 3 cohorts</span></div>
-      <div class="card"><div class="muted">Doubts in Queue</div><h2 style="font-size:44px;color:var(--chilli)">${S.teacherDoubts.length}</h2><span class="muted">Pending response</span></div>
-      <div class="card"><div class="muted">Notes Published</div><h2 style="font-size:44px">${S.notes.length}</h2><button class="btn sm" onclick="go('notes')" style="margin-top:4px">View all</button></div>
+      <div class="card"><div class="muted">Doubts in Queue</div><h2 style="font-size:44px;color:var(--chilli)">${
+        S.teacherDoubts.length
+      }</h2><span class="muted">Pending response</span></div>
+      <div class="card"><div class="muted">Notes Published</div><h2 style="font-size:44px">${
+        S.notes.length
+      }</h2><button class="btn sm" onclick="go('notes')" style="margin-top:4px">View all</button></div>
     </div>
     <div class="grid">
       <div class="card">
         <h3>Pending Student Doubts (${S.teacherDoubts.length})</h3>
         <div style="display:grid;gap:12px;margin-top:14px">
-          ${S.teacherDoubts.map(d=>`<div style="padding:10px;border-radius:10px;background:var(--soft);border:1px solid var(--ink)">
+          ${
+            S.teacherDoubts
+              .map(
+                (
+                  d
+                ) => `<div style="padding:10px;border-radius:10px;background:var(--soft);border:1px solid var(--ink)">
             <div class="row sp"><b>${d.st}</b><span class="tag" style="background:var(--card)">Doubt</span></div>
             <p style="margin:6px 0;font-size:13px">"${d.q}"</p>
             <div class="row" style="flex-wrap:nowrap"><input id="tr_${d.id}" placeholder="Write reply..." style="font-size:12px;padding:6px"><button class="btn sm" onclick="replyTeacher(${d.id})">Send</button></div>
-          </div>`).join('')||'<p class="muted">All student doubts resolved! 🎉</p>'}
+          </div>`
+              )
+              .join("") ||
+            '<p class="muted">All student doubts resolved! 🎉</p>'
+          }
         </div>
       </div>
       <div class="card">
@@ -421,235 +1490,633 @@ home(){
           <button class="btn red" onclick="addTeacherNote()">Publish to Students 📚</button>
         </div>
       </div>
-    </div>`;
-  }
-  return head(`Namaste, ${S.name}! 🙏`,`You’re on a ${S.streak}-day streak. Consistency builds mastery.`)+`
+    </div>`
+            );
+          }
+          return (
+            head(
+              `Namaste, ${S.name}! 🙏`,
+              `You’re on a ${S.streak}-day streak. Consistency builds mastery.`
+            ) +
+            `
   <div class="grid" style="margin-bottom:18px">
-    <div class="card" style="background:var(--mango);color:#071B2B"><div class="muted">Credit Points Balance</div><h2 style="font-size:44px">${S.credits}</h2><button class="btn ghost sm" onclick="go('rewards')" style="margin-top:6px">Redeem Perks →</button></div>
-    <div class="card"><div class="muted">Smart Notes Saved</div><h2 style="font-size:44px">${S.notes.length}</h2><span class="muted">Indexed & searchable</span></div>
-    <div class="card"><div class="muted">Study Streak</div><h2 style="font-size:44px">${S.streak} days 🔥</h2><span class="muted">Top 5% of learners</span></div>
+    <div class="card" style="background:var(--mango);color:#071B2B"><div class="muted">Credit Points Balance</div><h2 style="font-size:44px">${
+      S.credits
+    }</h2><button class="btn ghost sm" onclick="go('rewards')" style="margin-top:6px">Redeem Perks →</button></div>
+    <div class="card"><div class="muted">Smart Notes Saved</div><h2 style="font-size:44px">${
+      S.notes.length
+    }</h2><span class="muted">Indexed & searchable</span></div>
+    <div class="card"><div class="muted">Study Streak</div><h2 style="font-size:44px">${
+      S.streak
+    } days 🔥</h2><span class="muted">Top 5% of learners</span></div>
   </div>
   <div class="grid">
-    <div class="card"><h3>Subject Mastery Progress</h3><div style="display:grid;gap:12px;margin-top:14px">${[['Physics',72],['Maths',55],['Chemistry',38],['CS',84]].map(p=>`<div><div class="row sp"><b>${p[0]}</b><span style="color:var(--chilli);font-weight:700">${p[1]}%</span></div>${bar(p[1])}</div>`).join('')}</div></div>
-    <div class="card"><h3>Today’s Study Tasks</h3><div style="display:grid;gap:10px;margin-top:14px">${['Revise Newton’s Laws & friction','Answer or upvote doubt in Q&A','Complete 4-question assessment quiz','Drop into a peer voice study room'].map((t,idx)=>`<label class="row" style="cursor:pointer;font-size:13px"><input type="checkbox" style="width:18px;height:18px;accent-color:var(--chilli)" onchange="if(this.checked){S.credits+=idx==2?10:5;toast('+'+(idx==2?10:5)+' credits!');$('#top .pill').textContent='🏆 '+S.credits+' credits';}">${t}</label>`).join('')}</div></div>
-  </div>`;
-},
-notes(){
-  const sj=['All',...new Set(S.notes.map(n=>n.s))];
-  return head('Smart notes library','Everything you’ve saved, categorized and preserved for years.')+`
-  <div class="row" style="margin-bottom:16px"><input id="sq" style="max-width:260px" placeholder="Search notes..." value="${S.q}" oninput="S.q=this.value;nl()" aria-label="Search notes">${sj.map(s=>`<span class="chip ${S.subj==s?'on':''}" onclick="S.subj='${s}';go('notes')">${s}</span>`).join('')}</div>
+    <div class="card"><h3>Subject Mastery Progress</h3><div style="display:grid;gap:12px;margin-top:14px">${[
+      ["Physics", 72],
+      ["Maths", 55],
+      ["Chemistry", 38],
+      ["CS", 84],
+    ]
+      .map(
+        (p) =>
+          `<div><div class="row sp"><b>${
+            p[0]
+          }</b><span style="color:var(--chilli);font-weight:700">${
+            p[1]
+          }%</span></div>${bar(p[1])}</div>`
+      )
+      .join("")}</div></div>
+    <div class="card"><h3>Today’s Study Tasks</h3><div style="display:grid;gap:10px;margin-top:14px">${[
+      "Revise Newton’s Laws & friction",
+      "Answer or upvote doubt in Q&A",
+      "Complete 4-question assessment quiz",
+      "Drop into a peer voice study room",
+    ]
+      .map(
+        (t, idx) =>
+          `<label class="row" style="cursor:pointer;font-size:13px"><input type="checkbox" style="width:18px;height:18px;accent-color:var(--chilli)" onchange="if(this.checked){S.credits+=idx==2?10:5;toast('+'+(idx==2?10:5)+' credits!');$('#top .pill').textContent='🏆 '+S.credits+' credits';}">${t}</label>`
+      )
+      .join("")}</div></div>
+  </div>`
+          );
+        },
+        notes() {
+          const sj = ["All", ...new Set(S.notes.map((n) => n.s))];
+          return (
+            head(
+              "Smart notes library",
+              "Everything you’ve saved, categorized and preserved for years."
+            ) +
+            `
+  <div class="row" style="margin-bottom:16px"><input id="sq" style="max-width:260px" placeholder="Search notes..." value="${
+    S.q
+  }" oninput="S.q=this.value;nl()" aria-label="Search notes">${sj
+              .map(
+                (s) =>
+                  `<span class="chip ${
+                    S.subj == s ? "on" : ""
+                  }" onclick="S.subj='${s}';go('notes')">${s}</span>`
+              )
+              .join("")}</div>
   <div class="card" style="margin-bottom:18px"><div class="row"><input id="nt" style="flex:2;min-width:180px" placeholder="Note title (e.g. Thermodynamics summary)" aria-label="Note title"><select id="ns" style="flex:1;min-width:120px" aria-label="Subject"><option>Physics</option><option>Maths</option><option>Chemistry</option><option>Biology</option><option>CS</option></select><button class="btn red" onclick="addNote()">Upload note (+10 pts)</button></div></div>
-  <div class="grid" id="nl">${nlh()}</div>`;
-},
-chat(){
-  const m=S.mentors[S.mi];
-  return head('Student–mentor chat','Direct 1-on-1 academic guidance with instant responses.')+`<div class="chat">
-    <div class="card list">${S.mentors.map((x,i)=>`<button class="${i==S.mi?'on':''}" onclick="S.mi=${i};go('chat')">${av(x.n,i)}<span><b>${x.n}</b><br><span class="muted">${x.s}</span></span></button>`).join('')}</div>
-    <div class="card"><div class="msgs" id="cm">${m.msgs.map(x=>`<div class="m ${x[0]=='me'?'me':''}">${x[1]}</div>`).join('')}</div><div class="row" style="margin-top:10px;flex-wrap:nowrap"><button class="btn ghost sm" title="Share file" onclick="toast('Diagram attached 📎')">📎</button><input id="ci" placeholder="Type message..." onkeydown="if(event.key=='Enter')send()" aria-label="Message"><button class="btn" onclick="send()">Send</button></div></div>
-  </div>`;
-},
-voice(){
-  return head('Voice study rooms','Drop-in audio spaces for group study and live doubt resolution.')+`<div class="grid">${S.rooms.map((r,i)=>`<div class="card ${S.inRoom==i?'" style="border:2px solid var(--chilli)':''}">
-    <div class="row sp"><h3>${r.n}</h3>${r.live?'<span style="font-size:12px;font-weight:700;color:var(--chilli)"><span class="live"></span> live</span>':'<span class="muted" style="font-size:12px">quiet</span>'}</div>
-    <p class="muted" style="font-size:12px;margin:4px 0 10px">Topic: <b>${r.topic||'Open study'}</b></p>
-    <div class="row" style="margin:10px 0;min-height:36px">${r.who.map((w,j)=>av(w,j+i)).join('')||'<span class="muted" style="font-size:12px">Room is quiet.</span>'}${S.inRoom==i?av(S.name,4):''}</div>
+  <div class="grid" id="nl">${nlh()}</div>`
+          );
+        },
+        chat() {
+          const m = S.mentors[S.mi];
+          return (
+            head(
+              "Student–mentor chat",
+              "Direct 1-on-1 academic guidance with instant responses."
+            ) +
+            `<div class="chat">
+    <div class="card list">${S.mentors
+      .map(
+        (x, i) =>
+          `<button class="${
+            i == S.mi ? "on" : ""
+          }" onclick="S.mi=${i};go('chat')">${av(x.n, i)}<span><b>${
+            x.n
+          }</b><br><span class="muted">${x.s}</span></span></button>`
+      )
+      .join("")}</div>
+    <div class="card"><div class="msgs" id="cm">${m.msgs
+      .map((x) => `<div class="m ${x[0] == "me" ? "me" : ""}">${x[1]}</div>`)
+      .join(
+        ""
+      )}</div><div class="row" style="margin-top:10px;flex-wrap:nowrap"><button class="btn ghost sm" title="Share file" onclick="toast('Diagram attached 📎')">📎</button><input id="ci" placeholder="Type message..." onkeydown="if(event.key=='Enter')send()" aria-label="Message"><button class="btn" onclick="send()">Send</button></div></div>
+  </div>`
+          );
+        },
+        voice() {
+          return (
+            head(
+              "Voice study rooms",
+              "Drop-in audio spaces for group study and live doubt resolution."
+            ) +
+            `<div class="grid">${S.rooms
+              .map(
+                (r, i) => `<div class="card ${
+                  S.inRoom == i ? '" style="border:2px solid var(--chilli)' : ""
+                }">
+    <div class="row sp"><h3>${r.n}</h3>${
+                  r.live
+                    ? '<span style="font-size:12px;font-weight:700;color:var(--chilli)"><span class="live"></span> live</span>'
+                    : '<span class="muted" style="font-size:12px">quiet</span>'
+                }</div>
+    <p class="muted" style="font-size:12px;margin:4px 0 10px">Topic: <b>${
+      r.topic || "Open study"
+    }</b></p>
+    <div class="row" style="margin:10px 0;min-height:36px">${
+      r.who.map((w, j) => av(w, j + i)).join("") ||
+      '<span class="muted" style="font-size:12px">Room is quiet.</span>'
+    }${S.inRoom == i ? av(S.name, 4) : ""}</div>
     <div class="row sp" style="border-top:1px solid var(--ink);padding-top:10px">
-      <span class="muted" style="font-size:12px">${r.who.length+(S.inRoom==i?1:0)} listening</span>
-      ${S.inRoom==i?`<div class="row"><button class="btn sm ${S.muted?'mint':'ghost'}" onclick="S.muted=!S.muted;toast(S.muted?'Microphone muted':'Microphone active');go('voice')">${S.muted?'Unmute':'Mute'}</button><button class="btn red sm" onclick="S.inRoom=-1;toast('Left room');go('voice')">Leave</button></div>`:`<button class="btn sm" onclick="S.inRoom=${i};toast('Joined ${r.n}');go('voice')">Join room</button>`}
+      <span class="muted" style="font-size:12px">${
+        r.who.length + (S.inRoom == i ? 1 : 0)
+      } listening</span>
+      ${
+        S.inRoom == i
+          ? `<div class="row"><button class="btn sm ${
+              S.muted ? "mint" : "ghost"
+            }" onclick="S.muted=!S.muted;toast(S.muted?'Microphone muted':'Microphone active');go('voice')">${
+              S.muted ? "Unmute" : "Mute"
+            }</button><button class="btn red sm" onclick="S.inRoom=-1;toast('Left room');go('voice')">Leave</button></div>`
+          : `<button class="btn sm" onclick="S.inRoom=${i};toast('Joined ${r.n}');go('voice')">Join room</button>`
+      }
     </div>
-  </div>`).join('')}</div>`;
-},
-groups(){
-  return head('Group study squads','Learning is better together. Collaborate and motivate each other.')+`<div class="grid">${S.groups.map((g,i)=>`<div class="card ${g.j?'" style="border:2px solid var(--chilli)':''}">
-    <div class="row sp"><span class="tag" style="background:var(--mango)">${g.cat||'Study Squad'}</span>${g.j?'<span style="font-size:11px;font-weight:700;color:var(--chilli)">✓ Joined</span>':''}</div>
+  </div>`
+              )
+              .join("")}</div>`
+          );
+        },
+        groups() {
+          return (
+            head(
+              "Group study squads",
+              "Learning is better together. Collaborate and motivate each other."
+            ) +
+            `<div class="grid">${S.groups
+              .map(
+                (g, i) => `<div class="card ${
+                  g.j ? '" style="border:2px solid var(--chilli)' : ""
+                }">
+    <div class="row sp"><span class="tag" style="background:var(--mango)">${
+      g.cat || "Study Squad"
+    }</span>${
+                  g.j
+                    ? '<span style="font-size:11px;font-weight:700;color:var(--chilli)">✓ Joined</span>'
+                    : ""
+                }</div>
     <h3 style="margin:10px 0 4px">${g.n}</h3>
-    <p class="muted" style="margin-bottom:14px">${g.m+(g.j?1:0)} members collaborating</p>
-    <button class="btn sm ${g.j?'ghost':''}" onclick="S.groups[${i}].j=!S.groups[${i}].j;toast('${g.j?'Left':'Joined'} squad');go('groups')">${g.j?'Joined ✓':'Join squad'}</button>
-  </div>`).join('')}</div>`;
-},
-qa(){
-  return head('Doubt Q&A forum','Ask tough doubts; verified mentors and top students answer.')+`
+    <p class="muted" style="margin-bottom:14px">${
+      g.m + (g.j ? 1 : 0)
+    } members collaborating</p>
+    <button class="btn sm ${
+      g.j ? "ghost" : ""
+    }" onclick="S.groups[${i}].j=!S.groups[${i}].j;toast('${
+                  g.j ? "Left" : "Joined"
+                } squad');go('groups')">${
+                  g.j ? "Joined ✓" : "Join squad"
+                }</button>
+  </div>`
+              )
+              .join("")}</div>`
+          );
+        },
+        qa() {
+          return (
+            head(
+              "Doubt Q&A forum",
+              "Ask tough doubts; verified mentors and top students answer."
+            ) +
+            `
   <div class="card" style="margin-bottom:18px"><div class="row"><input id="qi" style="flex:1;min-width:200px" placeholder="What’s your doubt? (e.g. Why does friction do work on a rolling ball?)" aria-label="Question"><button class="btn red" onclick="ask()">Ask doubt (+5 pts)</button></div></div>
-  <div style="display:grid;gap:14px">${S.qa.map((x,i)=>`<div class="card">
-    <div class="row sp"><h3 style="font-size:17px">${x.q}</h3><button class="btn ghost sm" onclick="S.qa[${i}].v++;go('qa')" title="Upvote">▲ ${x.v}</button></div>
-    <p class="muted" style="font-size:12px;margin:2px 0 8px">Asked by ${x.by}</p>
-    ${x.a?`<div style="padding:10px;background:var(--soft);border-radius:10px;border:1px solid var(--ink);font-size:13px"><b style="color:var(--chilli)">Answer:</b> ${x.a}</div>`:`<div class="row" style="margin-top:8px;flex-wrap:nowrap"><input id="an${i}" placeholder="Write an answer..." style="font-size:12px;padding:6px"><button class="btn sm" onclick="answer(${i})">Submit (+10 pts)</button></div>`}
-  </div>`).join('')}</div>`;
-},
-ai(){
-  return head('AI academic assistant','Instant grounded explanations, quiz generation and weekly plans.')+`
-  <div class="card"><div class="msgs" id="am">${S.ai.map(x=>`<div class="m ${x[0]=='me'?'me':''}">${x[1]}</div>`).join('')}</div>
-  <div class="row" style="margin:10px 0">${['Explain photosynthesis','Quiz me on Newton’s Laws','Plan my study week','Difference between Mean & Median'].map(s=>`<span class="chip" onclick="askAI('${s}')">${s}</span>`).join('')}</div>
-  <div class="row" style="flex-wrap:nowrap"><input id="ai" placeholder="Ask anything about your syllabus or saved notes..." onkeydown="if(event.key=='Enter')askAI()" aria-label="Ask AI"><button class="btn red" onclick="askAI()">Ask AI</button></div></div>`;
-},
-gap(){
-  const g=S.gap,n=S.notes.slice(0,3);
-  return head('Study gap recovery','Key EduBridge Differentiator: Return with confidence using your own past saved notes.')+`
+  <div style="display:grid;gap:14px">${S.qa
+    .map(
+      (x, i) => `<div class="card">
+    <div class="row sp"><h3 style="font-size:17px">${
+      x.q
+    }</h3><button class="btn ghost sm" onclick="S.qa[${i}].v++;go('qa')" title="Upvote">▲ ${
+        x.v
+      }</button></div>
+    <p class="muted" style="font-size:12px;margin:2px 0 8px">Asked by ${
+      x.by
+    }</p>
+    ${
+      x.a
+        ? `<div style="padding:10px;background:var(--soft);border-radius:10px;border:1px solid var(--ink);font-size:13px"><b style="color:var(--chilli)">Answer:</b> ${x.a}</div>`
+        : `<div class="row" style="margin-top:8px;flex-wrap:nowrap"><input id="an${i}" placeholder="Write an answer..." style="font-size:12px;padding:6px"><button class="btn sm" onclick="answer(${i})">Submit (+10 pts)</button></div>`
+    }
+  </div>`
+    )
+    .join("")}</div>`
+          );
+        },
+        ai() {
+          return (
+            head(
+              "AI academic assistant",
+              "Instant grounded explanations, quiz generation and weekly plans."
+            ) +
+            `
+  <div class="card"><div class="msgs" id="am">${S.ai
+    .map((x) => `<div class="m ${x[0] == "me" ? "me" : ""}">${x[1]}</div>`)
+    .join("")}</div>
+  <div class="row" style="margin:10px 0">${[
+    "Explain photosynthesis",
+    "Quiz me on Newton’s Laws",
+    "Plan my study week",
+    "Difference between Mean & Median",
+  ]
+    .map((s) => `<span class="chip" onclick="askAI('${s}')">${s}</span>`)
+    .join("")}</div>
+  <div class="row" style="flex-wrap:nowrap"><input id="ai" placeholder="Ask anything about your syllabus or saved notes..." onkeydown="if(event.key=='Enter')askAI()" aria-label="Ask AI"><button class="btn red" onclick="askAI()">Ask AI</button></div></div>`
+          );
+        },
+        gap() {
+          const g = S.gap,
+            n = S.notes.slice(0, 3);
+          return (
+            head(
+              "Study gap recovery",
+              "Key EduBridge Differentiator: Return with confidence using your own past saved notes."
+            ) +
+            `
   <div class="card" style="margin-bottom:18px">
-    <label for="gr" class="row sp"><b>How long has your study break been?</b> <span class="chip on">${g} month${g>1?'s':''}</span></label>
+    <label for="gr" class="row sp"><b>How long has your study break been?</b> <span class="chip on">${g} month${
+              g > 1 ? "s" : ""
+            }</span></label>
     <input type="range" id="gr" min="1" max="24" value="${g}" style="padding:0;border:0;accent-color:var(--chilli);cursor:pointer;margin:10px 0" oninput="S.gap=+this.value;go('gap');$('#gr').focus()">
     <div class="row sp muted" style="font-size:11px"><span>1 Month (Quick recall)</span><span>6 Months (Semester)</span><span>12 Months (Year off)</span><span>24 Months (Pivot)</span></div>
   </div>
   <div class="card">
     <div class="row sp"><h3>Your Tailored Comeback Schedule (${g} Month Gap)</h3><span class="tag" style="background:var(--mango)">Adaptive Plan</span></div>
     <div class="tl" style="margin-top:16px">
-      <div><b>Week 1: Cognitive Warm-Up</b><br><span class="muted">Skim your saved note: “${n[0].t}” and take a 3-question diagnostic quiz.</span></div>
-      <div><b>Week ${g>6?'2–4':'2'}: Rebuild Core Working Models</b><br><span class="muted">Revisit “${n[1].t}” with the AI assistant and solve 5 guided problems.</span></div>
-      <div><b>Week ${g>6?'5–8':'3–4'}: Active Re-integration</b><br><span class="muted">Work through “${n[2].t}” and drop into peer voice study rooms to clarify doubts.</span></div>
+      <div><b>Week 1: Cognitive Warm-Up</b><br><span class="muted">Skim your saved note: “${
+        n[0].t
+      }” and take a 3-question diagnostic quiz.</span></div>
+      <div><b>Week ${
+        g > 6 ? "2–4" : "2"
+      }: Rebuild Core Working Models</b><br><span class="muted">Revisit “${
+              n[1].t
+            }” with the AI assistant and solve 5 guided problems.</span></div>
+      <div><b>Week ${
+        g > 6 ? "5–8" : "3–4"
+      }: Active Re-integration</b><br><span class="muted">Work through “${
+              n[2].t
+            }” and drop into peer voice study rooms to clarify doubts.</span></div>
     </div>
     <button class="btn red" style="margin-top:20px" onclick="S.credits+=20;toast('Recovery plan started! +20 credits 🎯');$('#top .pill').textContent='🏆 '+S.credits+' credits'">Start my recovery plan (+20 pts) →</button>
-  </div>`;
-},
-career(){
-  return head('Career roadmaps','Pick an aspirational dream. See the verified academic pathway.')+`
-  <div class="row" style="margin-bottom:16px">${Object.keys(CAR).map(c=>`<span class="chip ${S.cr==c?'on':''}" onclick="S.cr='${c}';go('career')">${c} Pathway</span>`).join('')}</div>
+  </div>`
+          );
+        },
+        career() {
+          return (
+            head(
+              "Career roadmaps",
+              "Pick an aspirational dream. See the verified academic pathway."
+            ) +
+            `
+  <div class="row" style="margin-bottom:16px">${Object.keys(CAR)
+    .map(
+      (c) =>
+        `<span class="chip ${
+          S.cr == c ? "on" : ""
+        }" onclick="S.cr='${c}';go('career')">${c} Pathway</span>`
+    )
+    .join("")}</div>
   <div class="card">
-    <div class="row sp"><h3>${S.cr} Career Architecture</h3><span class="tag" style="background:var(--mango)">5-Stage Map</span></div>
-    <div class="tl" style="margin-top:16px">${CAR[S.cr].map((s,i)=>`<div><b>Stage ${i+1}: ${s}</b></div>`).join('')}</div>
-  </div>`;
-},
-quiz(){
-  const z=S.qz;
-  if(z.done){
-    return head('Assessments & Quizzes','Reinforce concepts with active recall and earned credits.')+`
+    <div class="row sp"><h3>${
+      S.cr
+    } Career Architecture</h3><span class="tag" style="background:var(--mango)">5-Stage Map</span></div>
+    <div class="tl" style="margin-top:16px">${CAR[S.cr]
+      .map((s, i) => `<div><b>Stage ${i + 1}: ${s}</b></div>`)
+      .join("")}</div>
+  </div>`
+          );
+        },
+        quiz() {
+          const z = S.qz;
+          if (z.done) {
+            return (
+              head(
+                "Assessments & Quizzes",
+                "Reinforce concepts with active recall and earned credits."
+              ) +
+              `
     <div class="card" style="text-align:center;padding:36px 20px;max-width:500px;margin:0 auto">
       <h2 style="font-size:56px">${z.sc}/${QZ.length}</h2>
-      <p style="font-weight:700;margin:6px 0">${z.sc>=3?'🎉 Outstanding performance!':'💪 Good effort! Keep practicing.'}</p>
-      <p class="muted">You earned <b style="color:var(--chilli)">+${z.sc*10} credits</b> added to your wallet.</p>
+      <p style="font-weight:700;margin:6px 0">${
+        z.sc >= 3
+          ? "🎉 Outstanding performance!"
+          : "💪 Good effort! Keep practicing."
+      }</p>
+      <p class="muted">You earned <b style="color:var(--chilli)">+${
+        z.sc * 10
+      } credits</b> added to your wallet.</p>
       <button class="btn red" style="margin-top:16px" onclick="S.qz={i:0,sc:0,done:false,pick:-1};go('quiz')">Retake assessment</button>
-    </div>`;
-  }
-  const q=QZ[z.i];
-  return head('Assessments & Quizzes','Reinforce concepts with active recall and earned credits.')+`
+    </div>`
+            );
+          }
+          const q = QZ[z.i];
+          return (
+            head(
+              "Assessments & Quizzes",
+              "Reinforce concepts with active recall and earned credits."
+            ) +
+            `
   <div class="card" style="max-width:680px">
-    <div class="row sp"><span class="chip on">Question ${z.i+1} of ${QZ.length}</span><span class="muted">Score: ${z.sc}</span></div>
-    <div class="bar" style="margin:10px 0"><i style="width:${((z.i+1)/QZ.length)*100}%"></i></div>
+    <div class="row sp"><span class="chip on">Question ${z.i + 1} of ${
+              QZ.length
+            }</span><span class="muted">Score: ${z.sc}</span></div>
+    <div class="bar" style="margin:10px 0"><i style="width:${
+      ((z.i + 1) / QZ.length) * 100
+    }%"></i></div>
     <h3 style="margin:12px 0 16px;font-size:18px">${q.q}</h3>
-    ${q.o.map((o,i)=>`<button class="opt ${z.pick<0?'':i==q.a?'ok':i==z.pick?'no':''}" ${z.pick>=0?'disabled':''} onclick="pick(${i})">${o} ${z.pick>=0&&i==q.a?'✓':''}</button>`).join('')}
-    ${z.pick>=0?`<div style="padding:10px;border-radius:10px;background:var(--soft);border:1px solid var(--ink);font-size:12px;margin:12px 0"><b style="color:var(--chilli)">Explanation:</b> ${q.exp}</div><div class="row" style="justify-content:flex-end"><button class="btn red" onclick="nextQ()">${z.i==QZ.length-1?'See final score 🏆':'Next question →'}</button></div>`:''}
-  </div>`;
-},
-offline(){
-  return head('Offline learning & downloads','Study anywhere, on buses, trains, or low-connectivity zones.')+`
+    ${q.o
+      .map(
+        (o, i) =>
+          `<button class="opt ${
+            z.pick < 0 ? "" : i == q.a ? "ok" : i == z.pick ? "no" : ""
+          }" ${z.pick >= 0 ? "disabled" : ""} onclick="pick(${i})">${o} ${
+            z.pick >= 0 && i == q.a ? "✓" : ""
+          }</button>`
+      )
+      .join("")}
+    ${
+      z.pick >= 0
+        ? `<div style="padding:10px;border-radius:10px;background:var(--soft);border:1px solid var(--ink);font-size:12px;margin:12px 0"><b style="color:var(--chilli)">Explanation:</b> ${
+            q.exp
+          }</div><div class="row" style="justify-content:flex-end"><button class="btn red" onclick="nextQ()">${
+            z.i == QZ.length - 1 ? "See final score 🏆" : "Next question →"
+          }</button></div>`
+        : ""
+    }
+  </div>`
+          );
+        },
+        offline() {
+          return (
+            head(
+              "Offline learning & downloads",
+              "Study anywhere, on buses, trains, or low-connectivity zones."
+            ) +
+            `
   <div class="card" style="margin-bottom:18px">
     <div class="row sp">
-      <div><h3>Offline simulation mode</h3><span class="muted">${S.offline?'Active: Showing only downloaded materials':'Inactive: Connected to live cloud'}</span></div>
-      <button class="btn ${S.offline?'red':'mint'}" onclick="S.offline=!S.offline;$('#ban').style.display=S.offline?'block':'none';go('offline')">${S.offline?'Disable offline mode':'⚡ Simulate offline mode'}</button>
+      <div><h3>Offline simulation mode</h3><span class="muted">${
+        S.offline
+          ? "Active: Showing only downloaded materials"
+          : "Inactive: Connected to live cloud"
+      }</span></div>
+      <button class="btn ${
+        S.offline ? "red" : "mint"
+      }" onclick="S.offline=!S.offline;$('#ban').style.display=S.offline?'block':'none';go('offline')">${
+              S.offline ? "Disable offline mode" : "⚡ Simulate offline mode"
+            }</button>
     </div>
   </div>
-  <div class="grid">${vis().map(n=>`<div class="card">
-    <span class="tag" style="background:${n.o?'var(--mint);color:#fff':'var(--soft)'}">${n.o?'Cached offline ✓':'Cloud only'}</span>
+  <div class="grid">${
+    vis()
+      .map(
+        (n) => `<div class="card">
+    <span class="tag" style="background:${
+      n.o ? "var(--mint);color:#fff" : "var(--soft)"
+    }">${n.o ? "Cached offline ✓" : "Cloud only"}</span>
     <h3 style="font-size:17px;margin:10px 0 4px">${n.t}</h3>
     <p class="muted" style="margin-bottom:12px">${n.s} • Saved ${n.d}</p>
-    <button class="btn sm" onclick="toast('Opened offline note: ${n.t}')">📖 Read note</button>
-  </div>`).join('')||'<p class="muted">No downloaded notes yet. Click Download in the Notes Library.</p>'}</div>`;
-},
-rewards(){
-  return head('Credit rewards & perks','Your study consistency translates into tangible academic rewards.')+`
-  <div class="card" style="background:var(--mango);color:#071B2B;margin-bottom:18px"><div class="muted">Available Balance</div><h2 style="font-size:54px">${S.credits} Credits</h2></div>
-  <div class="grid">${[['1-on-1 Mentor Strategy Session',300],['Premium Revision Notes Pack',150],['EduBridge Sticker Kit',100],['Verified Badge: Quiz Champ',50]].map(r=>`<div class="card">
+    <button class="btn sm" onclick="toast('Opened offline note: ${
+      n.t
+    }')">📖 Read note</button>
+  </div>`
+      )
+      .join("") ||
+    '<p class="muted">No downloaded notes yet. Click Download in the Notes Library.</p>'
+  }</div>`
+          );
+        },
+        rewards() {
+          return (
+            head(
+              "Credit rewards & perks",
+              "Your study consistency translates into tangible academic rewards."
+            ) +
+            `
+  <div class="card" style="background:var(--mango);color:#071B2B;margin-bottom:18px"><div class="muted">Available Balance</div><h2 style="font-size:54px">${
+    S.credits
+  } Credits</h2></div>
+  <div class="grid">${[
+    ["1-on-1 Mentor Strategy Session", 300],
+    ["Premium Revision Notes Pack", 150],
+    ["EduBridge Sticker Kit", 100],
+    ["Verified Badge: Quiz Champ", 50],
+  ]
+    .map(
+      (r) => `<div class="card">
     <h3 style="font-size:17px">${r[0]}</h3>
     <p class="muted" style="margin:6px 0 14px">${r[1]} credits</p>
-    <button class="btn sm ${S.credits>=r[1]?'red':'ghost'}" onclick="redeem(${r[1]},'${r[0]}')">${S.credits>=r[1]?'Redeem perk 🎁':'Need '+(r[1]-S.credits)+' more'}</button>
-  </div>`).join('')}</div>`;
-}
-};
+    <button class="btn sm ${
+      S.credits >= r[1] ? "red" : "ghost"
+    }" onclick="redeem(${r[1]},'${r[0]}')">${
+        S.credits >= r[1]
+          ? "Redeem perk 🎁"
+          : "Need " + (r[1] - S.credits) + " more"
+      }</button>
+  </div>`
+    )
+    .join("")}</div>`
+          );
+        },
+      };
 
-function nlh(){
-  return vis().map(n=>{
-    const i=S.notes.indexOf(n);
-    return `<div class="card">
-      <div class="row sp"><span class="tag" style="background:${COL[i%5]}">${n.s}</span>${n.o?'<span style="font-size:11px;font-weight:700;color:var(--chilli)">✓ Offline</span>':''}</div>
+      function nlh() {
+        return (
+          vis()
+            .map((n) => {
+              const i = S.notes.indexOf(n);
+              return `<div class="card">
+      <div class="row sp"><span class="tag" style="background:${COL[i % 5]}">${
+                n.s
+              }</span>${
+                n.o
+                  ? '<span style="font-size:11px;font-weight:700;color:var(--chilli)">✓ Offline</span>'
+                  : ""
+              }</div>
       <h3 style="font-size:17px;margin:10px 0 4px">${n.t}</h3>
       <p class="muted" style="margin-bottom:12px">Saved ${n.d}</p>
-      <div class="row"><button class="btn sm" onclick="toast('Opening note: ${n.t}…')">Open</button><button class="btn ghost sm" onclick="S.notes[${i}].o=!S.notes[${i}].o;toast('${n.o?'Removed from':'Saved to'} offline storage');go('notes')">${n.o?'Offline ✓':'Download'}</button></div>
+      <div class="row"><button class="btn sm" onclick="toast('Opening note: ${
+        n.t
+      }…')">Open</button><button class="btn ghost sm" onclick="S.notes[${i}].o=!S.notes[${i}].o;toast('${
+                n.o ? "Removed from" : "Saved to"
+              } offline storage');go('notes')">${
+                n.o ? "Offline ✓" : "Download"
+              }</button></div>
     </div>`;
-  }).join('')||'<p class="muted">No notes match your search. Upload one above!</p>';
-}
-function nl(){$('#nl').innerHTML=nlh()}
-function addNote(){
-  const t=$('#nt').value.trim();if(!t)return toast('Add a title first');
-  S.notes.unshift({t,s:$('#ns').value,d:'Today',o:false});
-  S.credits+=10;toast('Note saved! +10 credits');$('#top .pill').textContent='🏆 '+S.credits+' credits';go('notes');
-}
-function addTeacherNote(){
-  const t=$('#tn_t').value.trim();if(!t)return toast('Enter note title');
-  S.notes.unshift({t,s:$('#tn_s').value,d:'Today',o:false});
-  toast('Published note to all students! 📚');go('home');
-}
-function replyTeacher(id){
-  const inp=$('#tr_'+id),val=inp?inp.value.trim():'';
-  if(!val)return toast('Write a reply first');
-  S.teacherDoubts=S.teacherDoubts.filter(d=>d.id!==id);
-  toast('Reply sent to student! Marked resolved ✓');go('home');
-}
-function send(){
-  const i=$('#ci'),v=i.value.trim();if(!v)return;
-  const m=S.mentors[S.mi];m.msgs.push(['me',v]);go('chat');
-  setTimeout(()=>{
-    m.msgs.push(['t','Got it! Let’s review this concept together. Have you drawn the free body diagram or checked your base case?']);
-    if(S.view=='chat')go('chat');
-  },800);
-}
-function ask(){
-  const v=$('#qi').value.trim();if(!v)return toast('Type your doubt first');
-  S.qa.unshift({q:v,by:S.name,a:'',v:0});
-  S.credits+=5;toast('Doubt posted! +5 credits');$('#top .pill').textContent='🏆 '+S.credits+' credits';go('qa');
-}
-function askAI(s){
-  const i=$('#ai'),v=s||(i?i.value.trim():'');if(!v)return;
-  S.ai.push(['me',v]);
-  const l=v.toLowerCase();
-  let r='Great academic question! In EduBridge AI, we recommend breaking this down into first principles and testing recall in the Assessments tab.';
-  if(l.includes('photo')) r='🌱 Photosynthesis: Light reactions produce ATP & NADPH by splitting H₂O; the Calvin cycle uses them to fix CO₂ into glucose in the stroma.';
-  else if(l.includes('quiz')||l.includes('newton')) r='🎯 Quick check: Newton’s 2nd Law states F = dp/dt = m*a. Try the Assessments tab for timed scored practice!';
-  else if(l.includes('plan')||l.includes('week')) r='📅 Weekly Cadence: Mon (Physics notes), Tue (Calculus problem set), Wed (Chemistry doubts), Thu (CS DSA), Fri (Mock quiz), Weekend (Voice room revision).';
-  else if(l.includes('mean')) r='📊 Mean is the arithmetic balance point pulled by outliers; Median is the physical middle value that remains robust.';
-  go('ai');
-  setTimeout(()=>{S.ai.push(['t',r]);if(S.view=='ai')go('ai')},700);
-}
-function answer(i){
-  const v=$('#an'+i).value.trim();if(!v)return toast('Write an answer first');
-  S.qa[i].a=v+' ('+S.name+')';S.credits+=10;toast('Answer posted! +10 credits');$('#top .pill').textContent='🏆 '+S.credits+' credits';go('qa');
-}
-function toggleTheme(){
-  const r=document.documentElement,d=r.dataset.theme||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
-  r.dataset.theme=d=='dark'?'light':'dark';
-}
-function pick(i){
-  S.qz.pick=i;if(i==QZ[S.qz.i].a)S.qz.sc++;go('quiz');
-}
-function nextQ(){
-  const z=S.qz;
-  if(z.i==QZ.length-1){z.done=true;S.credits+=z.sc*10;toast('+'+(z.sc*10)+' credits earned!');$('#top .pill').textContent='🏆 '+S.credits+' credits';}
-  else{z.i++;z.pick=-1;}
-  go('quiz');
-}
-function redeem(c,n){
-  if(S.credits<c)return toast('Need '+(c-S.credits)+' more credits!');
-  S.credits-=c;toast('Redeemed: '+n+' 🎁');$('#top .pill').textContent='🏆 '+S.credits+' credits';go('rewards');
-}
+            })
+            .join("") ||
+          '<p class="muted">No notes match your search. Upload one above!</p>'
+        );
+      }
+      function nl() {
+        $("#nl").innerHTML = nlh();
+      }
+      function addNote() {
+        const t = $("#nt").value.trim();
+        if (!t) return toast("Add a title first");
+        S.notes.unshift({ t, s: $("#ns").value, d: "Today", o: false });
+        S.credits += 10;
+        toast("Note saved! +10 credits");
+        $("#top .pill").textContent = "🏆 " + S.credits + " credits";
+        go("notes");
+      }
+      function addTeacherNote() {
+        const t = $("#tn_t").value.trim();
+        if (!t) return toast("Enter note title");
+        S.notes.unshift({ t, s: $("#tn_s").value, d: "Today", o: false });
+        toast("Published note to all students! 📚");
+        go("home");
+      }
+      function replyTeacher(id) {
+        const inp = $("#tr_" + id),
+          val = inp ? inp.value.trim() : "";
+        if (!val) return toast("Write a reply first");
+        S.teacherDoubts = S.teacherDoubts.filter((d) => d.id !== id);
+        toast("Reply sent to student! Marked resolved ✓");
+        go("home");
+      }
+      function send() {
+        const i = $("#ci"),
+          v = i.value.trim();
+        if (!v) return;
+        const m = S.mentors[S.mi];
+        m.msgs.push(["me", v]);
+        go("chat");
+        setTimeout(() => {
+          m.msgs.push([
+            "t",
+            "Got it! Let’s review this concept together. Have you drawn the free body diagram or checked your base case?",
+          ]);
+          if (S.view == "chat") go("chat");
+        }, 800);
+      }
+      function ask() {
+        const v = $("#qi").value.trim();
+        if (!v) return toast("Type your doubt first");
+        S.qa.unshift({ q: v, by: S.name, a: "", v: 0 });
+        S.credits += 5;
+        toast("Doubt posted! +5 credits");
+        $("#top .pill").textContent = "🏆 " + S.credits + " credits";
+        go("qa");
+      }
+      function askAI(s) {
+        const i = $("#ai"),
+          v = s || (i ? i.value.trim() : "");
+        if (!v) return;
+        S.ai.push(["me", v]);
+        const l = v.toLowerCase();
+        let r =
+          "Great academic question! In EduBridge AI, we recommend breaking this down into first principles and testing recall in the Assessments tab.";
+        if (l.includes("photo"))
+          r =
+            "🌱 Photosynthesis: Light reactions produce ATP & NADPH by splitting H₂O; the Calvin cycle uses them to fix CO₂ into glucose in the stroma.";
+        else if (l.includes("quiz") || l.includes("newton"))
+          r =
+            "🎯 Quick check: Newton’s 2nd Law states F = dp/dt = m*a. Try the Assessments tab for timed scored practice!";
+        else if (l.includes("plan") || l.includes("week"))
+          r =
+            "📅 Weekly Cadence: Mon (Physics notes), Tue (Calculus problem set), Wed (Chemistry doubts), Thu (CS DSA), Fri (Mock quiz), Weekend (Voice room revision).";
+        else if (l.includes("mean"))
+          r =
+            "📊 Mean is the arithmetic balance point pulled by outliers; Median is the physical middle value that remains robust.";
+        go("ai");
+        setTimeout(() => {
+          S.ai.push(["t", r]);
+          if (S.view == "ai") go("ai");
+        }, 700);
+      }
+      function answer(i) {
+        const v = $("#an" + i).value.trim();
+        if (!v) return toast("Write an answer first");
+        S.qa[i].a = v + " (" + S.name + ")";
+        S.credits += 10;
+        toast("Answer posted! +10 credits");
+        $("#top .pill").textContent = "🏆 " + S.credits + " credits";
+        go("qa");
+      }
+      function toggleTheme() {
+        const r = document.documentElement,
+          d =
+            r.dataset.theme ||
+            (matchMedia("(prefers-color-scheme:dark)").matches
+              ? "dark"
+              : "light");
+        r.dataset.theme = d == "dark" ? "light" : "dark";
+      }
+      function pick(i) {
+        S.qz.pick = i;
+        if (i == QZ[S.qz.i].a) S.qz.sc++;
+        go("quiz");
+      }
+      function nextQ() {
+        const z = S.qz;
+        if (z.i == QZ.length - 1) {
+          z.done = true;
+          S.credits += z.sc * 10;
+          toast("+" + z.sc * 10 + " credits earned!");
+          $("#top .pill").textContent = "🏆 " + S.credits + " credits";
+        } else {
+          z.i++;
+          z.pick = -1;
+        }
+        go("quiz");
+      }
+      function redeem(c, n) {
+        if (S.credits < c)
+          return toast("Need " + (c - S.credits) + " more credits!");
+        S.credits -= c;
+        toast("Redeemed: " + n + " 🎁");
+        $("#top .pill").textContent = "🏆 " + S.credits + " credits";
+        go("rewards");
+      }
 
-/* Background Particle Canvas */
-(()=>{
-  const c=document.getElementById('pt'),x=c.getContext('2d');
-  let W,H,P=[];const rm=matchMedia('(prefers-reduced-motion:reduce)').matches;
-  function rs(){
-    W=c.width=innerWidth;H=c.height=innerHeight;
-    P=Array.from({length:Math.min(50,Math.floor(W*H/22000))},()=>({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.35,vy:(Math.random()-.5)*.35,r:2+Math.random()*2.5}));
-  }
-  function f(){
-    x.clearRect(0,0,W,H);
-    if(!rm)for(const p of P){p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;}
-    for(let i=0;i<P.length;i++)for(let j=i+1;j<P.length;j++){
-      const d=Math.hypot(P[i].x-P[j].x,P[i].y-P[j].y);
-      if(d<130){x.strokeStyle='rgba(22,125,141,'+(.22*(1-d/130))+')';x.beginPath();x.moveTo(P[i].x,P[i].y);x.lineTo(P[j].x,P[j].y);x.stroke();}
-    }
-    for(const p of P){x.fillStyle='rgba(22,125,141,.45)';x.beginPath();x.arc(p.x,p.y,p.r,0,7);x.fill();}
-    if(!rm)requestAnimationFrame(f);
-  }
-  rs();addEventListener('resize',()=>{rs();if(rm)f()});f();
-})();
-</script>
-</body>
+      /* Background Particle Canvas */
+      (() => {
+        const c = document.getElementById("pt"),
+          x = c.getContext("2d");
+        let W,
+          H,
+          P = [];
+        const rm = matchMedia("(prefers-reduced-motion:reduce)").matches;
+        function rs() {
+          W = c.width = innerWidth;
+          H = c.height = innerHeight;
+          P = Array.from(
+            { length: Math.min(50, Math.floor((W * H) / 22000)) },
+            () => ({
+              x: Math.random() * W,
+              y: Math.random() * H,
+              vx: (Math.random() - 0.5) * 0.35,
+              vy: (Math.random() - 0.5) * 0.35,
+              r: 2 + Math.random() * 2.5,
+            })
+          );
+        }
+        function f() {
+          x.clearRect(0, 0, W, H);
+          if (!rm)
+            for (const p of P) {
+              p.x += p.vx;
+              p.y += p.vy;
+              if (p.x < 0 || p.x > W) p.vx *= -1;
+              if (p.y < 0 || p.y > H) p.vy *= -1;
+            }
+          for (let i = 0; i < P.length; i++)
+            for (let j = i + 1; j < P.length; j++) {
+              const d = Math.hypot(P[i].x - P[j].x, P[i].y - P[j].y);
+              if (d < 130) {
+                x.strokeStyle = "rgba(22,125,141," + 0.22 * (1 - d / 130) + ")";
+                x.beginPath();
+                x.moveTo(P[i].x, P[i].y);
+                x.lineTo(P[j].x, P[j].y);
+                x.stroke();
+              }
+            }
+          for (const p of P) {
+            x.fillStyle = "rgba(22,125,141,.45)";
+            x.beginPath();
+            x.arc(p.x, p.y, p.r, 0, 7);
+            x.fill();
+          }
+          if (!rm) requestAnimationFrame(f);
+        }
+        rs();
+        addEventListener("resize", () => {
+          rs();
+          if (rm) f();
+        });
+        f();
+      })();
+    </script>
+  </body>
 </html>
