@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MentorProfile } from '../types';
+import { ApiService } from '../services/api';
 
 interface ChatViewProps {
   mentors: MentorProfile[];
@@ -14,6 +15,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
 }) => {
   const [activeMentorId, setActiveMentorId] = useState<string>(mentors[0]?.id || 'm1');
   const [inputText, setInputText] = useState('');
+  const [isAiReplying, setIsAiReplying] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   const activeMentor = mentors.find((m) => m.id === activeMentorId) || mentors[0];
@@ -22,12 +24,60 @@ export const ChatView: React.FC<ChatViewProps> = ({
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [activeMentor?.messages]);
 
-  const handleSend = (e?: React.FormEvent) => {
+  const handleSend = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    if (!inputText.trim()) return;
+    if (!inputText.trim() || isAiReplying) return;
 
-    onSendMessage(activeMentor.id, inputText.trim());
+    const userText = inputText.trim();
     setInputText('');
+
+    // Add user message immediately
+    onSendMessage(activeMentor.id, userText);
+    setIsAiReplying(true);
+
+    try {
+      // Build history from existing messages for context
+      const history = (activeMentor.messages || []).slice(-10).map((msg) => ({
+        role: msg.sender === 'me' ? ('user' as const) : ('model' as const),
+        text: msg.text,
+      }));
+
+      // System context so AI replies as a subject-matter mentor
+      const systemPrompt = `You are ${activeMentor.name}, an expert ${activeMentor.subject} mentor on EduBridge AI. Answer the student's question concisely and helpfully. Keep responses under 3 sentences.`;
+
+      const response = await ApiService.askAI({
+        message: `[Student question for ${activeMentor.subject} mentor]: ${userText}`,
+        history,
+        systemPrompt,
+      });
+
+      // Add AI mentor reply
+      onSendMessage(activeMentor.id, `[AI Mentor] ${response.answer || response.text || 'I am here to help! Could you elaborate on your question?'}`);
+    } catch {
+      // Fallback to helpful static reply if AI is unavailable
+      const fallbacks: Record<string, string[]> = {
+        m1: [
+          'Look at the free body diagram and resolve forces along the inclined plane.',
+          'Review the formula sheet for static vs kinetic friction differences.',
+          'Great question! Work through each step and check your signs carefully.',
+        ],
+        m2: [
+          'Try substitution: let u = the inner expression and find du.',
+          'Check your limits of integration when using trigonometric substitution.',
+          'Double-check your algebra at each step — small errors compound quickly.',
+        ],
+        m3: [
+          'Check your base case first — without it, recursion causes a stack overflow.',
+          'Your time complexity looks like O(N log N). Can you justify that?',
+          'Write a small test case first, then trace through the algorithm manually.',
+        ],
+      };
+      const list = fallbacks[activeMentor.id] || fallbacks['m1'];
+      const reply = list[Math.floor(Math.random() * list.length)];
+      onSendMessage(activeMentor.id, reply);
+    } finally {
+      setIsAiReplying(false);
+    }
   };
 
   const handleShareFile = () => {
@@ -98,7 +148,7 @@ export const ChatView: React.FC<ChatViewProps> = ({
               </span>
               <div>
                 <h3 className="font-extrabold text-sm">{activeMentor.name}</h3>
-                <span className="text-xs opacity-70">{activeMentor.subject} Specialization • Typical response &lt; 15 mins</span>
+                <span className="text-xs opacity-70">{activeMentor.subject} Specialization • AI-powered responses</span>
               </div>
             </div>
             <button
@@ -131,6 +181,13 @@ export const ChatView: React.FC<ChatViewProps> = ({
                 </div>
               );
             })}
+            {isAiReplying && (
+              <div className="flex justify-start">
+                <div className="max-w-[82%] px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-medium border border-[var(--ink)]/20 shadow-sm bg-[var(--soft)] text-[var(--ink)] rounded-bl-sm opacity-60">
+                  <span className="animate-pulse">✦ Mentor is typing…</span>
+                </div>
+              </div>
+            )}
             <div ref={messagesEndRef} />
           </div>
 
@@ -142,12 +199,14 @@ export const ChatView: React.FC<ChatViewProps> = ({
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               className="eb-input py-2 text-sm flex-1"
+              disabled={isAiReplying}
             />
             <button
               type="submit"
               className="eb-btn text-sm font-bold px-4"
+              disabled={isAiReplying || !inputText.trim()}
             >
-              Send ↵
+              {isAiReplying ? '…' : 'Send ↵'}
             </button>
           </form>
         </div>

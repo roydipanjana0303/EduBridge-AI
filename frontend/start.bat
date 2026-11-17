@@ -1,12 +1,27 @@
 @echo off
-echo ============================================================
-echo  EduBridge AI - Frontend Dev Server Startup
-echo ============================================================
+echo ============================================
+echo  EduBridge AI - Frontend Dev Server
+echo  React + Vite on http://localhost:3000
+echo ============================================
+echo.
+
 cd /d "%~dp0"
-echo Starting Vite dev server on http://localhost:3000 ...
+
+REM Check Node
+node --version >nul 2>&1
+if errorlevel 1 (
+    echo [ERROR] Node.js not found. Install Node 18+ from https://nodejs.org
+    pause
+    exit /b 1
+)
+
+REM Kill any previous zombie vite instances on port 3000
+for /f "tokens=5" %%a in ('netstat -aon ^| findstr :3000 ^| findstr LISTENING 2^>nul') do (
+    taskkill /f /pid %%a >nul 2>&1
+)
+
+echo [START] Starting Vite dev server on http://localhost:3000
+echo [INFO]  Proxying /api to http://localhost:8080
+echo [INFO]  Proxying /ws  to ws://localhost:8080
 echo.
-echo  Demo accounts (no backend needed):
-echo    Student : student@edubridge.ai  /  Student@123
-echo    Mentor  : mentor@edubridge.ai   /  Mentor@123
-echo.
-npm run dev
+call npm run dev

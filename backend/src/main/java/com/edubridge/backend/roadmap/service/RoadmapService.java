@@ -4,8 +4,8 @@ import com.edubridge.backend.roadmap.entity.Roadmap;
 import com.edubridge.backend.roadmap.repository.RoadmapRepository;
 import com.edubridge.backend.roadmap.dto.RoadmapRequest;
 import com.edubridge.backend.user.repository.UserRepository;
-import tools.jackson.core.JacksonException;
-import tools.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,7 +56,7 @@ public class RoadmapService {
         r.setCareerGoal(req.careerGoal());
         try {
             r.setRoadmapData(req.roadmapData() == null ? "{}" : mapper.writeValueAsString(req.roadmapData()));
-        } catch (JacksonException e) {
+        } catch (JsonProcessingException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         r.setUpdatedAt(Instant.now());

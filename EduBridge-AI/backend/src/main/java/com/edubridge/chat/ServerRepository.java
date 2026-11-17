@@ -1,0 +1,1 @@
+package com.edubridge.chat; import java.util.*; import org.springframework.data.jpa.repository.JpaRepository; import com.edubridge.backend.user.entity.User; public interface ServerRepository extends JpaRepository<CommunityServer,UUID>{List<CommunityServer> findAllByOwnerOrIdIn(User owner,Collection<UUID> ids);}

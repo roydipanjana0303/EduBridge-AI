@@ -42,11 +42,13 @@ BEGIN
     LIMIT 1;
 
     IF v_teacher_id IS NULL THEN
-        RAISE EXCEPTION 'No TEACHER user exists. Add a teacher account before running this seed.';
+        RAISE NOTICE 'No TEACHER user exists yet. Demo seed skipped — re-run Flyway after creating a teacher account.';
+        RETURN;
     END IF;
 
     IF v_student_id IS NULL THEN
-        RAISE EXCEPTION 'No STUDENT user exists. Register a student before running this seed.';
+        RAISE NOTICE 'No STUDENT user exists yet. Demo seed skipped — re-run Flyway after registering a student.';
+        RETURN;
     END IF;
 
     -- Enroll the demo student in up to three courses owned by this teacher.
@@ -211,7 +213,8 @@ BEGIN
     END LOOP;
 
     IF v_first_assessment_id IS NULL THEN
-        RAISE EXCEPTION 'No subjects were found under courses owned by the selected teacher. Check course and subject relationships.';
+        RAISE NOTICE 'No subjects found under teacher courses. Skipping assessment seed.';
+        RETURN;
     END IF;
 
     -- One evaluated demo result for the first assessment.

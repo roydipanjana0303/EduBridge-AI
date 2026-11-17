@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { VoiceRoom } from '../types';
 import { AppIcon } from '../components/Icons';
+import { VoiceRoomDialog } from '../components/voice/VoiceRoomDialog';
 
 interface VoiceViewProps {
   rooms: VoiceRoom[];
@@ -11,16 +12,21 @@ interface VoiceViewProps {
 const AVATAR_COLORS = ['#B9E4E8', '#9ED5DC', '#D3EEF1', '#B9E4E8', '#9ED5DC'];
 
 export const VoiceView: React.FC<VoiceViewProps> = ({ rooms, userName, onToast }) => {
-  const [activeRoomId, setActiveRoomId] = useState<string | null>('v1');
+  const [activeRoomId, setActiveRoomId] = useState<string | null>(null);
+  const [liveKitRoom, setLiveKitRoom] = useState<string | null>(null);
   const [isMuted, setIsMuted] = useState<boolean>(false);
 
   const handleJoin = (roomId: string, roomName: string) => {
     setActiveRoomId(roomId);
-    onToast(`Connected to voice channel: ${roomName} 🎧`);
+    // Build a valid LiveKit room name from the room name (alphanumeric + dash/underscore)
+    const lkRoom = roomName.replace(/[^A-Za-z0-9_-]/g, '-').replace(/-+/g, '-').slice(0, 80);
+    setLiveKitRoom(lkRoom);
+    onToast(`Connecting to voice channel: ${roomName} 🎧`);
   };
 
   const handleLeave = () => {
     setActiveRoomId(null);
+    setLiveKitRoom(null);
     onToast('Disconnected from voice channel.');
   };
 
@@ -154,6 +160,18 @@ export const VoiceView: React.FC<VoiceViewProps> = ({ rooms, userName, onToast }
           );
         })}
       </div>
+
+      {/* LiveKit voice dialog — opens when a room is joined */}
+      {liveKitRoom && (
+        <VoiceRoomDialog
+          room={liveKitRoom}
+          onClose={() => {
+            setLiveKitRoom(null);
+            setActiveRoomId(null);
+            onToast('Left voice room.');
+          }}
+        />
+      )}
     </div>
   );
 };

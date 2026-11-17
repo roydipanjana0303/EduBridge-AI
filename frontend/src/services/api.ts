@@ -61,14 +61,16 @@ export interface ChatMessage {
 
 export interface AskAIRequest {
   message: string;
-  history?: Array<{ role: 'user' | 'model'; content: string }>;
+  history?: Array<{ role: 'user' | 'model'; text?: string; content?: string }>;
   contextNoteIds?: string[];
   userId?: string;
+  systemPrompt?: string;
 }
 
 export interface AskAIResponse {
   success: boolean;
   answer: string;
+  text?: string;
   provider?: string;
   model?: string;
   groundedSources?: string[];
@@ -155,7 +157,8 @@ export const ApiService = {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           message: req.message,
-          history: req.history || [],
+          history: (req.history || []).map(h => ({ role: h.role, content: h.text || h.content || '' })),
+          ...(req.systemPrompt ? { system_prompt: req.systemPrompt } : {}),
         }),
       });
       if (!res.ok) {

@@ -129,6 +129,7 @@ class ChatRequest(BaseModel):
         default_factory=list,
         max_length=10
     )
+    system_prompt: str | None = Field(default=None, max_length=2000)
 
 
 # --------------------------------------------------
@@ -200,7 +201,7 @@ def _do_chat(request: ChatRequest) -> dict:
             model=MODEL,
             contents=contents,
             config=types.GenerateContentConfig(
-                system_instruction=SYSTEM_PROMPT,
+                system_instruction=request.system_prompt or SYSTEM_PROMPT,
                 temperature=0.4,
                 max_output_tokens=1500
             )

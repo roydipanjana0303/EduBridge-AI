@@ -1,0 +1,3 @@
+package com.edubridge.chat;
+import jakarta.persistence.*; import java.util.UUID;
+@Entity @Table(name="chat_channels") public class ChatChannel { @Id @GeneratedValue private UUID id; @ManyToOne(optional=false) private CommunityServer server; @Column(nullable=false,length=80) private String name; @Column(nullable=false,length=12) private String type="TEXT"; protected ChatChannel(){} public ChatChannel(CommunityServer s,String n,String t){server=s;name=n;type=t;} public UUID getId(){return id;} public CommunityServer getServer(){return server;} public String getName(){return name;} public String getType(){return type;} }
