@@ -7,3 +7,9 @@ Run:
 
 If successful, start it again:
 .\mvnw.cmd spring-boot:run
+
+
+
+
+Email: teacher@edubridge.ai
+Password: Teacher@123
