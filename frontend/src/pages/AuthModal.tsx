@@ -29,8 +29,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (mode === 'register' && role === 'Mentor') { setError('Mentor accounts must be provisioned by an administrator. Create a student account or sign in with an existing mentor account.'); return; }
-    const finalName = name.trim() || (role === 'Student' ? 'Aarav' : 'Meera Ma’am');
+    const finalName = name.trim() || (role === 'Student' ? 'Student User' : 'Mentor User');
     setBusy(true); setError('');
     Promise.resolve(onLogin({
       name: finalName,
@@ -95,10 +94,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           </p>
 
           <div className="mb-4 rounded-lg border border-[var(--ink)]/20 bg-[var(--soft)] p-3 text-xs">
-            <strong>Demo accounts (no backend required)</strong>
+            <strong>Verified Database Accounts</strong>
             <div className="mt-1"><b>Student:</b> student@edubridge.ai / Student@123</div>
             <div><b>Mentor:</b> mentor@edubridge.ai / Mentor@123</div>
-            <div className="mt-1 opacity-70">Choose the matching account type above before signing in.</div>
+            <div className="mt-1 opacity-70">Or click <b>Create account</b> below to register a brand new account!</div>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -133,17 +132,47 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter password"
+                placeholder="Enter password (min 8 characters)"
                 className="eb-input text-sm"
-                minLength={mode === 'register' ? 10 : 1}
+                minLength={mode === 'register' ? 8 : 1}
                 required
               />
             </div>
-            {error && <p role="alert" className="text-sm text-red-600">{error}</p>}
-            <div className="flex gap-3 text-xs"><button type="button" onClick={() => setMode('login')} className={mode === 'login' ? 'font-bold underline' : ''}>Sign in</button><button type="button" onClick={() => setMode('register')} className={mode === 'register' ? 'font-bold underline' : ''}>Create account</button></div>
+            {error && (
+              <div role="alert" className="p-2.5 rounded-lg bg-red-500/10 border border-red-500/30 text-xs font-bold text-red-600">
+                {error}
+              </div>
+            )}
+            <div className="flex gap-4 text-xs pt-1">
+              <button
+                type="button"
+                onClick={() => {
+                  setMode('login');
+                  setError('');
+                  if (!email) setEmail(role === 'Student' ? 'student@edubridge.ai' : 'mentor@edubridge.ai');
+                }}
+                className={`transition-all ${mode === 'login' ? 'font-black underline text-[var(--chilli)]' : 'opacity-70 hover:opacity-100'}`}
+              >
+                Sign in to existing account
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setMode('register');
+                  setError('');
+                  if (email === 'student@edubridge.ai' || email === 'mentor@edubridge.ai') {
+                    setEmail('');
+                    setName('');
+                  }
+                }}
+                className={`transition-all ${mode === 'register' ? 'font-black underline text-[var(--chilli)]' : 'opacity-70 hover:opacity-100'}`}
+              >
+                Create new account
+              </button>
+            </div>
             <button
               type="submit"
-              disabled={busy || !email || !password || (mode === 'register' && password.length < 10)}
+              disabled={busy || !email || !password || (mode === 'register' && password.length < 8)}
               className="eb-btn red w-full py-3 text-sm font-black mt-2"
             >
               {busy ? 'Please wait…' : mode === 'register' ? 'Create account' : 'Sign in'} →

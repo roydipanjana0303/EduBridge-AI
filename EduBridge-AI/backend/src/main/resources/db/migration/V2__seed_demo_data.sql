@@ -41,11 +41,12 @@ BEGIN
     ORDER BY created_at, id
     LIMIT 1;
 
-    -- On a fresh database there are no users yet: skip the seed instead of
-    -- failing the whole migration (which would stop the backend from starting).
-    IF v_teacher_id IS NULL OR v_student_id IS NULL THEN
-        RAISE NOTICE 'Demo seed skipped: needs one TEACHER and one STUDENT user.';
-        RETURN;
+    IF v_teacher_id IS NULL THEN
+        RAISE EXCEPTION 'No TEACHER user exists. Add a teacher account before running this seed.';
+    END IF;
+
+    IF v_student_id IS NULL THEN
+        RAISE EXCEPTION 'No STUDENT user exists. Register a student before running this seed.';
     END IF;
 
     -- Enroll the demo student in up to three courses owned by this teacher.

@@ -7,7 +7,7 @@ public class Roadmap {
  @Id @GeneratedValue(strategy=GenerationType.UUID) private UUID id;
  @ManyToOne(fetch=FetchType.LAZY) @JoinColumn(name="student_id",nullable=false) private User student;
  @Column(name="career_goal",nullable=false) private String careerGoal;
- @Column(name="roadmap_data",columnDefinition="jsonb") private String roadmapData;
+ @Column(name="roadmap_data",columnDefinition="jsonb") @org.hibernate.annotations.ColumnTransformer(write="?::jsonb") private String roadmapData;
  @Column(name="created_at") private Instant createdAt;
  @Column(name="updated_at") private Instant updatedAt;
  public UUID getId(){return id;} public User getStudent(){return student;} public void setStudent(User v){student=v;}

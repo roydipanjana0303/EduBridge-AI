@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const Logo: React.FC<{ size?: number }> = ({ size = 32 }) => (
+export const Logo: React.FC<{ size?: number; compact?: boolean }> = ({ size = 32, compact = false }) => (
   <div className="flex items-center gap-2 select-none">
     <svg width={size} height={size} viewBox="0 0 100 100" aria-hidden="true" className="flex-none">
       <rect x="4" y="4" width="92" height="92" rx="24" fill="#071B2B" />
@@ -8,9 +8,11 @@ export const Logo: React.FC<{ size?: number }> = ({ size = 32 }) => (
       <path d="M14 72H86" stroke="#167D8D" strokeWidth="8" strokeLinecap="round" />
       <circle cx="50" cy="52" r="6" fill="#EEEEEE" />
     </svg>
-    <span className="font-extrabold text-xl tracking-tight text-[var(--ink)] logo-font">
-      Edu<b className="text-[var(--chilli)]">Bridge</b> AI
-    </span>
+    {!compact && (
+      <span className="font-extrabold text-xl tracking-tight text-[var(--ink)] logo-font whitespace-nowrap">
+        Edu<b className="text-[var(--chilli)]">Bridge</b> AI
+      </span>
+    )}
   </div>
 );
 
@@ -37,7 +39,10 @@ export const AppIcon: React.FC<{ name: string; className?: string }> = ({ name, 
     upload: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12",
     download: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3",
     mic: "M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8",
-    micOff: "M1 1l22 22M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23M12 19v4M8 23h8"
+    micOff: "M1 1l22 22M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23M12 19v4M8 23h8",
+    chevronLeft: "M15 18l-6-6 6-6",
+    chevronRight: "M9 18l6-6-6-6",
+    menu: "M3 12h18M3 6h18M3 18h18"
   };
 
   const path = iconPaths[name] || iconPaths['home'];

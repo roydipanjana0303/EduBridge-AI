@@ -24,14 +24,14 @@ logging.basicConfig(
 logger = logging.getLogger("EduBridgeAI")
 
 API_KEY = os.getenv("GEMINI_API_KEY")
-MODEL = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
+MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 
 client = None
 
 if API_KEY:
     client = genai.Client(
         api_key=API_KEY,
-        http_options=types.HttpOptions(timeout=60000)
+        http_options=types.HttpOptions(api_version='v1beta', timeout=60000)
     )
 else:
     logger.warning("Gemini API key is missing! Set GEMINI_API_KEY in ai-service/.env")
@@ -50,8 +50,10 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
+        "http://localhost:3001",
         "http://localhost:5173",
         "http://127.0.0.1:3000",
+        "http://127.0.0.1:3001",
         "http://127.0.0.1:5173",
     ],
     allow_credentials=True,
@@ -240,7 +242,7 @@ def _do_chat(request: ChatRequest) -> dict:
 
 
 # --------------------------------------------------
-# PRIMARY CHAT ENDPOINT
+# PRIMARY CHAT ENDPOINTS (supports /llm/chat, /ai/chat, /chat)
 # --------------------------------------------------
 
 @app.post("/llm/chat")
@@ -248,12 +250,18 @@ def chat(request: ChatRequest):
     return _do_chat(request)
 
 
-# --------------------------------------------------
-# ALIAS ENDPOINT (frontend calls /ai/chat)
-# --------------------------------------------------
-
 @app.post("/ai/chat")
 def chat_alias(request: ChatRequest):
+    return _do_chat(request)
+
+
+@app.post("/chat")
+def chat_direct(request: ChatRequest):
+    return _do_chat(request)
+
+
+@app.post("/llm/llm/chat")
+def chat_fallback(request: ChatRequest):
     return _do_chat(request)
 
 

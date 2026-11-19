@@ -24,7 +24,7 @@ logging.basicConfig(
 logger = logging.getLogger("EduBridgeAI")
 
 API_KEY = os.getenv("GEMINI_API_KEY")
-MODEL = os.getenv("GEMINI_MODEL", "gemini-3.6-flash")
+MODEL = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
 
 client = None
 

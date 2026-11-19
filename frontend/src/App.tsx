@@ -62,24 +62,21 @@ export const App: React.FC = () => {
   }, [theme]);
 
   useEffect(() => {
-    // Local demo session: works without Spring Boot or PostgreSQL.
-    const demoSession = localStorage.getItem('edubridge_demo_session');
-    if (demoSession) {
-      try {
-        const profile = JSON.parse(demoSession) as UserProfile;
-        setUser(profile);
-        setIsAuthenticated(true);
-        return;
-      } catch {
-        localStorage.removeItem('edubridge_demo_session');
-      }
+    // Clear any obsolete demo session to ensure real database auth
+    localStorage.removeItem('edubridge_demo_session');
+    if (!getAccessToken()) {
+      setIsAuthenticated(false);
+      return;
     }
-    if (!getAccessToken()) return;
     ApiService.fetchMe().then((account) => {
       const displayName = account.name || account.displayName || 'User';
-      setUser((previous) => ({ ...previous, name: displayName, role: account.role === 'MENTOR' ? 'Mentor' : 'Student' }));
+      const role = account.role === 'TEACHER' || account.role === 'MENTOR' ? 'Mentor' : 'Student';
+      setUser((previous) => ({ ...previous, name: displayName, role }));
       setIsAuthenticated(true);
-    }).catch(() => clearAccessToken());
+    }).catch(() => {
+      clearAccessToken();
+      setIsAuthenticated(false);
+    });
   }, []);
 
   // Toast helper
@@ -221,42 +218,30 @@ export const App: React.FC = () => {
           <AuthModal
             initialRole={authRole}
             onLogin={async (profile, credentials) => {
-              const demoAccounts = [
-                { role: 'Student' as const, email: 'student@edubridge.ai', password: 'Student@123', name: 'Student' },
-                { role: 'Mentor' as const, email: 'mentor@edubridge.ai', password: 'Mentor@123', name: 'Meera Mentor' },
-              ];
-              const matchedDemoAccount = credentials.mode === 'login'
-                ? demoAccounts.find((account) =>
-                    account.role === profile.role &&
-                    account.email === credentials.email.trim().toLowerCase() &&
-                    account.password === credentials.password)
-                : undefined;
-
-              if (matchedDemoAccount) {
-                clearAccessToken();
-                const demoProfile: UserProfile = {
-                  ...profile,
-                  role: matchedDemoAccount.role,
-                  name: matchedDemoAccount.name,
-                };
-                localStorage.setItem('edubridge_demo_session', JSON.stringify(demoProfile));
-                setUser(demoProfile);
+              if (credentials.mode === 'register') {
+                const regResult = await ApiService.register({
+                  displayName: profile.name,
+                  email: credentials.email,
+                  password: credentials.password,
+                  role: profile.role === 'Mentor' ? 'TEACHER' : 'STUDENT',
+                });
+                const token = regResult.accessToken || regResult.token || '';
+                setAccessToken(token);
+                const displayName = regResult.user.name || regResult.user.displayName || profile.name;
+                const role = regResult.user.role === 'TEACHER' || regResult.user.role === 'MENTOR' ? 'Mentor' : 'Student';
+                setUser({ ...profile, name: displayName, role });
                 setIsAuthenticated(true);
                 setShowAuthModal(false);
-                showToast(`Welcome, ${demoProfile.name}! Demo mode is active.`);
+                showToast(`Account created! Welcome, ${displayName}! 🎉`);
                 return;
               }
 
-              if (credentials.mode === 'register') {
-                throw new Error('Creating new accounts requires the EduBridge backend. Use one of the two demo accounts shown above.');
-              }
+              // Real database login
               const result = await ApiService.login({ email: credentials.email, password: credentials.password });
-              localStorage.removeItem('edubridge_demo_session');
-              // Backend returns accessToken field (not token)
-              const jwtToken = result.accessToken || (result as { token?: string }).token || '';
+              const jwtToken = result.accessToken || result.token || '';
               setAccessToken(jwtToken);
               const displayName = result.user.name || result.user.displayName || credentials.email;
-              const userRole = result.user.role === 'MENTOR' ? 'Mentor' : 'Student';
+              const userRole = result.user.role === 'TEACHER' || result.user.role === 'MENTOR' ? 'Mentor' : 'Student';
               setUser({ ...profile, name: displayName, role: userRole });
               setIsAuthenticated(true);
               setShowAuthModal(false);
@@ -374,7 +359,7 @@ export const App: React.FC = () => {
 
           {currentView === 'community' && (
             <div className="-m-2 sm:-m-6">
-              <CommunityChatView userName={user.name} onToast={showToast} />
+              <CommunityChatView userName={user.name} userRole={user.role} onToast={showToast} />
             </div>
           )}
 

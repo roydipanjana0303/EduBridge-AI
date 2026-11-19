@@ -31,14 +31,19 @@ public class LiveKitController {
 
     @PostMapping("/token")
     public TokenResponse token(@RequestBody TokenRequest r, Principal p) {
-        if (url.isBlank() || key.isBlank() || secret.length() < 32) {
-            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE, "LiveKit is not configured");
+        String rawRoom = r.room() == null ? "general" : r.room().trim();
+        String room = rawRoom.replaceAll("[^A-Za-z0-9_-]", "-");
+        if (room.length() < 2) {
+            room = "room-" + (room.isEmpty() ? "study" : room);
         }
-        String room = r.room() == null ? "" : r.room().trim();
-        if (!room.matches("[A-Za-z0-9_-]{2,80}")) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid room");
+        if (room.length() > 80) {
+            room = room.substring(0, 80);
         }
         var u = users.findByEmailIgnoreCase(p.getName()).orElseThrow();
+        if (url.isBlank() || key.isBlank() || secret.length() < 32) {
+            // Built-in WebRTC mode: return local mesh identifier
+            return new TokenResponse("webrtc-mesh", u.getId().toString() + ":" + u.getDisplayName());
+        }
         Instant now = Instant.now();
         SecretKey sk = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         String jwt = Jwts.builder().header().add("typ", "JWT").and().issuer(key).subject(u.getId().toString()).claim("name", u.getDisplayName()).claim("video", Map.of("roomJoin", true, "room", room, "canPublish", true, "canSubscribe", true, "canPublishData", true)).issuedAt(Date.from(now)).expiration(Date.from(now.plusSeconds(3600))).signWith(sk).compact();

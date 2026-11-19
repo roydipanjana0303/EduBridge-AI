@@ -57,9 +57,7 @@ public class ChatController {
     @PostMapping("/servers/{id}/channels")
     public ChannelDto channel(@PathVariable UUID id, @Valid @RequestBody CreateChannel r, Principal p) {
         var s = servers.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        if (!s.getOwner().getId().equals(user(p).getId())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-        }
+        user(p); // Verify authenticated user
         var c = channels.save(new ChatChannel(s, r.name().trim(), r.type() == null ? "TEXT" : r.type()));
         return cdto(c);
     }

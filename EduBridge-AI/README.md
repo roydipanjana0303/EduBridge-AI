@@ -53,6 +53,7 @@ Visit `http://localhost:3000`.
 3. Backend (Java 21): `cd backend && ./mvnw spring-boot:run` (Windows: `start.bat`). Flyway creates the schema on first start.
 4. AI service: `cd ai-service && start.bat` (or create a venv, `pip install -r requirements.txt`, `uvicorn app.main:app --port 8000`).
 5. Frontend: `cd frontend`, copy `.env.example` to `.env.local`, then `npm install && npm run dev`.
+   **Brand-new empty database only:** the `V2` demo-data migration needs one TEACHER and one STUDENT user to exist, so run the backend once with `SPRING_FLYWAY_TARGET=1` (creates tables only), register both users, then restart without it.
 6. Register a student account from the login screen. Sign in on a second browser/device to verify shared, database-backed community messages.
 
 The community chat uses the Spring Boot API and PostgreSQL; the WebSocket endpoint is `/ws` and requires a JWT in the STOMP CONNECT `Authorization` header. The UI also polls as a fallback. See [`docs/COMMUNITY_CHAT.md`](docs/COMMUNITY_CHAT.md) for API details and the production-readiness checklist.

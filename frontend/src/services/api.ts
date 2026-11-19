@@ -5,9 +5,12 @@
  * - FastAPI AI Service (Chatbot, Study Gap Recovery, Career Roadmap)
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
-const AI_SERVICE_URL = import.meta.env.VITE_AI_SERVICE_URL || 'http://localhost:8000';
-export const WS_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:8080/ws';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+const AI_SERVICE_URL = import.meta.env.VITE_AI_SERVICE_URL || '';
+export const WS_URL =
+  import.meta.env.VITE_WS_URL && String(import.meta.env.VITE_WS_URL).startsWith('ws')
+    ? String(import.meta.env.VITE_WS_URL)
+    : `${typeof window !== 'undefined' && window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${typeof window !== 'undefined' ? window.location.host : 'localhost:3000'}/ws`;
 
 const TOKEN_KEY = 'edubridge_access_token';
 export const getAccessToken = () => localStorage.getItem(TOKEN_KEY);
@@ -19,10 +22,22 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
   const headers = new Headers(init.headers);
   if (init.body && !headers.has('Content-Type')) headers.set('Content-Type', 'application/json');
   if (token) headers.set('Authorization', `Bearer ${token}`);
-  const response = await fetch(`${API_BASE_URL}${path}`, { ...init, headers });
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE_URL}${path}`, { ...init, headers });
+  } catch (err: unknown) {
+    throw new Error('Cannot reach EduBridge backend on port 8080. Please ensure the backend is running.');
+  }
   if (!response.ok) {
-    const body = await response.text().catch(() => '');
-    throw new Error(body || `Request failed (${response.status})`);
+    const raw = await response.text().catch(() => '');
+    let msg = raw;
+    try {
+      const parsed = JSON.parse(raw);
+      msg = parsed.message || parsed.error || parsed.detail || raw;
+    } catch {
+      // Use raw text
+    }
+    throw new Error(msg || `Request failed (${response.status})`);
   }
   if (response.status === 204) return undefined as T;
   return response.json() as Promise<T>;
@@ -152,7 +167,12 @@ export const ApiService = {
   // ── AI Service endpoints (FastAPI on port 8000) ──────────────────────────────
   async askAI(req: AskAIRequest): Promise<AskAIResponse> {
     try {
-      const res = await fetch(`${AI_SERVICE_URL}/llm/chat`, {
+      let endpoint = '/llm/chat';
+      if (AI_SERVICE_URL) {
+        const cleanBase = AI_SERVICE_URL.replace(/\/+$/, '');
+        endpoint = cleanBase.endsWith('/llm') ? `${cleanBase}/chat` : `${cleanBase}/llm/chat`;
+      }
+      const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

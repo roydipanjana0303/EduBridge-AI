@@ -88,3 +88,4 @@ T:\backend\src\main\java\com\edubridge\chat\ServerRepository.java
 T:\backend\src\main\java\com\edubridge\config\SecurityConfig.java
 T:\backend\src\main\java\com\edubridge\config\WebSocketConfig.java
 T:\backend\src\main\java\com\edubridge\voice\LiveKitController.java
+T:\backend\src\main\java\com\edubridge\voice\VoiceSignalController.java

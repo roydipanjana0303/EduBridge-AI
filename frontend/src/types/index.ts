@@ -16,6 +16,9 @@ export interface NoteItem {
   isOffline: boolean;
   content?: string;
   fileSize?: string;
+  fileType?: 'pdf' | 'docx' | 'image' | 'text';
+  fileName?: string;
+  fileUrl?: string;
 }
 
 export interface ChatMessage {

@@ -53,8 +53,14 @@ public class AuthService {
             passwordEncoder.encode(request.password())
         );
 
-        // Public registration always creates STUDENT accounts.
-        user.setRole(Role.STUDENT);
+        Role role = Role.STUDENT;
+        if (request.role() != null) {
+            String r = request.role().trim().toUpperCase();
+            if ("TEACHER".equals(r) || "MENTOR".equals(r)) {
+                role = Role.TEACHER;
+            }
+        }
+        user.setRole(role);
 
         User savedUser = userRepository.save(user);
 

@@ -149,8 +149,9 @@ export const ApiService = {
 
   // ── AI Service endpoints (FastAPI on port 8000) ──────────────────────────────
   async askAI(req: AskAIRequest): Promise<AskAIResponse> {
+    let res: Response;
     try {
-      const res = await fetch(`${AI_SERVICE_URL}/llm/chat`, {
+      res = await fetch(`${AI_SERVICE_URL}/llm/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -158,19 +159,31 @@ export const ApiService = {
           history: req.history || [],
         }),
       });
-      if (!res.ok) {
-        const err = await res.text().catch(() => '');
-        throw new Error(err || `AI service error (${res.status})`);
-      }
-      return await res.json();
     } catch (error) {
-      console.warn('AI service unreachable, using local fallback:', error);
-      // Graceful fallback for demo / offline mode
+      // Network failure: service not running, wrong URL/port, or blocked by CORS
+      console.warn('AI service unreachable:', error);
       return {
         success: false,
-        answer: 'The AI service is currently offline. Please start the AI service (ai-service/start.bat) and try again.',
+        answer: `Cannot reach the AI service at ${AI_SERVICE_URL}. Start it with ai-service/start.bat and check ${AI_SERVICE_URL}/health in your browser. If it is running, open the browser console (F12) for a CORS error.`,
         groundedSources: [],
       };
     }
+    if (!res.ok) {
+      // The service answered but reported an error (bad API key, model problem, quota...)
+      let detail = '';
+      try {
+        const body = await res.json();
+        detail = typeof body?.detail === 'string' ? body.detail : JSON.stringify(body?.detail ?? body);
+      } catch {
+        detail = await res.text().catch(() => '');
+      }
+      console.warn('AI service error', res.status, detail);
+      return {
+        success: false,
+        answer: `The AI service is running but returned an error (${res.status}): ${detail || 'no details'}. Check the ai-service console window for the full message.`,
+        groundedSources: [],
+      };
+    }
+    return await res.json();
   },
 };

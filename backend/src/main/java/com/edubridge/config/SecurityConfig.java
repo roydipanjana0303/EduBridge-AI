@@ -56,7 +56,7 @@ public class SecurityConfig {
     @ConditionalOnMissingBean(SecurityFilterChain.class)
     public SecurityFilterChain security(HttpSecurity http, JwtAuthenticationFilter jwt) throws Exception {
         return http.csrf(c -> c.disable())
-            .cors(c -> {})
+            .cors(c -> c.configurationSource(corsConfigurationSource()))
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(a -> a.requestMatchers("/api/auth/register", "/api/auth/login", "/actuator/health", "/ws", "/ws/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
             .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
@@ -66,11 +66,11 @@ public class SecurityConfig {
     }
 
     @Bean
-    public CorsConfigurationSource cors(@Value("${app.cors.allowed-origins:http://localhost:3000,http://localhost:5173}") String origins) {
+    public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration c = new CorsConfiguration();
-        c.setAllowedOrigins(Arrays.stream(origins.split(",")).map(String::trim).toList());
+        c.setAllowedOriginPatterns(List.of("http://localhost:*", "http://127.0.0.1:*", "*"));
         c.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        c.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With"));
+        c.setAllowedHeaders(List.of("*"));
         c.setExposedHeaders(List.of("Authorization"));
         c.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource s = new UrlBasedCorsConfigurationSource();

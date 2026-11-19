@@ -31,6 +31,11 @@ if not exist ".env" (
     exit /b 1
 )
 
+REM Free port 8080 if an existing backend instance is running
+for /f "tokens=5" %%a in ('netstat -aon ^| findstr :8080 ^| findstr LISTENING 2^>nul') do (
+    taskkill /f /pid %%a >nul 2>&1
+)
+
 echo [START] Launching Spring Boot on http://localhost:8080
 echo.
 java -jar target\backend-0.0.1-SNAPSHOT.jar

@@ -29,7 +29,7 @@ export const QuizView: React.FC<QuizViewProps> = ({ onAddCredits, onToast }) => 
       setSelectedOption(null);
     } else {
       setIsCompleted(true);
-      const earnedCredits = (score + (selectedOption === currentQuestion.correctAnswer ? 1 : 0)) * 10;
+      const earnedCredits = score * 10;
       if (earnedCredits > 0) {
         onAddCredits(earnedCredits, `Quiz completed! Scored ${score}/${QUIZ_QUESTIONS.length}`);
         onToast(`Quiz complete! +${earnedCredits} credits awarded 🏆`);

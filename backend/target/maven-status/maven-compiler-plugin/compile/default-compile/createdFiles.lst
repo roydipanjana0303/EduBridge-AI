@@ -83,6 +83,7 @@ com\edubridge\backend\friend\dto\FriendRequestResponse.class
 com\edubridge\backend\note\repository\NoteRepository.class
 com\edubridge\chat\ChatController$SendMessage.class
 com\edubridge\backend\result\controller\ResultController.class
+com\edubridge\voice\VoiceSignalController.class
 com\edubridge\backend\assessment\dto\AssessmentResponse.class
 com\edubridge\backend\reward\service\RewardService.class
 com\edubridge\chat\ChatController.class

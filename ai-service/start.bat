@@ -32,8 +32,13 @@ REM Verify Gemini key
 if not exist ".env" (
     echo [WARNING] .env file not found. Creating default...
     echo GEMINI_API_KEY=your-api-key-here > .env
-    echo GEMINI_MODEL=gemini-2.0-flash >> .env
+    echo GEMINI_MODEL=gemini-2.5-flash >> .env
     echo [ACTION] Edit ai-service\.env and set your GEMINI_API_KEY
+)
+
+REM Free port 8000 if an existing AI service instance is running
+for /f "tokens=5" %%a in ('netstat -aon ^| findstr :8000 ^| findstr LISTENING 2^>nul') do (
+    taskkill /f /pid %%a >nul 2>&1
 )
 
 echo.
