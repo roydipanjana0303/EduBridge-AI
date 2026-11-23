@@ -166,34 +166,48 @@ export const ApiService = {
 
   // ── AI Service endpoints (FastAPI on port 8000) ──────────────────────────────
   async askAI(req: AskAIRequest): Promise<AskAIResponse> {
-    try {
-      let endpoint = '/llm/chat';
-      if (AI_SERVICE_URL) {
-        const cleanBase = AI_SERVICE_URL.replace(/\/+$/, '');
-        endpoint = cleanBase.endsWith('/llm') ? `${cleanBase}/chat` : `${cleanBase}/llm/chat`;
+    const endpoints = [
+      AI_SERVICE_URL ? (AI_SERVICE_URL.endsWith('/llm') ? `${AI_SERVICE_URL}/chat` : `${AI_SERVICE_URL}/llm/chat`) : '/llm/chat',
+      '/llm/chat',
+      'http://localhost:8000/llm/chat',
+      'http://127.0.0.1:8000/llm/chat',
+      'http://localhost:8000/chat',
+    ];
+
+    let lastError: unknown = null;
+    for (const url of endpoints) {
+      try {
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: req.message,
+            history: (req.history || []).map((h) => ({
+              role: h.role,
+              content: h.text || h.content || '',
+            })),
+            ...(req.systemPrompt ? { system_prompt: req.systemPrompt } : {}),
+          }),
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data && (data.answer || data.text)) {
+            return data;
+          }
+        } else {
+          lastError = new Error(`HTTP ${res.status}: ${await res.text().catch(() => '')}`);
+        }
+      } catch (err) {
+        lastError = err;
       }
-      const res = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: req.message,
-          history: (req.history || []).map(h => ({ role: h.role, content: h.text || h.content || '' })),
-          ...(req.systemPrompt ? { system_prompt: req.systemPrompt } : {}),
-        }),
-      });
-      if (!res.ok) {
-        const err = await res.text().catch(() => '');
-        throw new Error(err || `AI service error (${res.status})`);
-      }
-      return await res.json();
-    } catch (error) {
-      console.warn('AI service unreachable, using local fallback:', error);
-      // Graceful fallback for demo / offline mode
-      return {
-        success: false,
-        answer: 'The AI service is currently offline. Please start the AI service (ai-service/start.bat) and try again.',
-        groundedSources: [],
-      };
     }
+
+    console.warn('All AI service endpoints unreachable:', lastError);
+    return {
+      success: false,
+      answer: 'The AI service is currently offline. Please start the AI service (ai-service/start.bat) and try again.',
+      groundedSources: [],
+    };
   },
 };
